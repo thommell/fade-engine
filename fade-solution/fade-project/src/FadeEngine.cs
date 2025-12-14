@@ -13,7 +13,9 @@ public sealed class FadeEngine {
     private ContentManager _content;
     
     // Sub-systems
-    private InputSystem _input = new();
+    private readonly InputSystem _input = new();
+    private readonly AssetSystem _assets = new();
+    private readonly SceneManager _sceneManager = new();
     
     public void Initialize() {}
     public void Load(SpriteBatch spriteBatch, ContentManager content) {
@@ -24,6 +26,7 @@ public sealed class FadeEngine {
 
     public void Update(GameTime gameTime) {
         _input.Update(gameTime);
+        _sceneManager.Update(gameTime);
     }
     public void Draw(SpriteBatch spriteBatch) {
     }
