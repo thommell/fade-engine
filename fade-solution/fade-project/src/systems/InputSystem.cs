@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace fade_project.systems;
@@ -22,6 +20,5 @@ public sealed class InputSystem {
     public bool IsKeyPressed(Keys key) => _kbState.IsKeyDown(key);
 
     public bool IsMouseLeftUp() => _mouseState.LeftButton == ButtonState.Pressed;
-    public bool IsMouseMiddleUp() => _mouseState.MiddleButton == ButtonState.Pressed;
     public bool IsMouseRightUp() => _mouseState.RightButton == ButtonState.Pressed;
 }
