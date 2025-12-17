@@ -1,5 +1,4 @@
-﻿using fade_project.systems;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace fade_project.containers;
