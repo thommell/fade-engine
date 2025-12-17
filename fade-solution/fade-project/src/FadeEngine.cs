@@ -13,17 +13,25 @@ public sealed class FadeEngine {
     private ContentManager _content;
     
     // Sub-systems
-    private InputSystem _input = new();
-    
-    public void Initialize() {}
+    private readonly InputSystem _input = new();
+    private readonly AssetSystem _assets = new();
+    private readonly SceneManager _sceneManager = new();
+
+    public void Initialize() {
+        _sceneManager.Initialize();
+    }
     public void Load(SpriteBatch spriteBatch, ContentManager content) {
         _spriteBatch = spriteBatch;
         _content = content;
+        _sceneManager.Load();
     }
     public void Unload() {}
 
     public void Update(GameTime gameTime) {
+        //TODO:
+        // Refactor all these methods to later only update/draw a SubSystems List.
         _input.Update(gameTime);
+        _sceneManager.Update(gameTime);
     }
     public void Draw(SpriteBatch spriteBatch) {
     }

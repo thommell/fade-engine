@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using fade_project.containers;
 using Microsoft.Xna.Framework;
 
