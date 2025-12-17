@@ -1,8 +1,6 @@
-﻿using System;
+using System;
 using fade_project.containers;
-using fade_project.systems;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace fade_project.testbed.scenes;
 
@@ -12,6 +10,8 @@ public class TestScene : Scene {
         base.OnEnter();
     }
 
-    public override void Update(GameTime gameTime) {
+    public override void OnExit() {
+        Console.WriteLine("LEAVING");
+        base.OnExit();
     }
 }
