@@ -7,18 +7,27 @@ public sealed class InputSystem {
     private MouseState _mouseState;
     private KeyboardState _kbState;
     
-    //TODO: Later?
-    // private MouseState _previousMouseState;
-    // private KeyboardState _previousKbState;
+    private MouseState _previousMouseState;
+    private KeyboardState _previousKbState;
     
     public void Update(GameTime gameTime) {
+        // KB
+        _previousKbState = _kbState;
         _kbState = Keyboard.GetState();
+        
+        // MOUSE
+        _previousMouseState = _mouseState;
         _mouseState = Mouse.GetState();
     }
 
     public bool IsKeyUp(Keys key) => _kbState.IsKeyUp(key);
-    public bool IsKeyPressed(Keys key) => _kbState.IsKeyDown(key);
+    public bool IsKeyDown(Keys key) => _kbState.IsKeyDown(key);
+    public bool IsKeyPressed(Keys key) => _kbState.IsKeyDown(key) && _previousKbState.IsKeyUp(key);
 
-    public bool IsMouseLeftUp() => _mouseState.LeftButton == ButtonState.Pressed;
-    public bool IsMouseRightUp() => _mouseState.RightButton == ButtonState.Pressed;
+    public bool IsMouseLeftDown() => _mouseState.LeftButton == ButtonState.Pressed;
+    public bool IsMouseRightDown() => _mouseState.RightButton == ButtonState.Pressed;
+    public bool IsMouseMiddleDown() => _mouseState.MiddleButton == ButtonState.Pressed;
+    public bool IsMouseLeftClicked() => IsMouseLeftDown() && _previousMouseState.LeftButton == ButtonState.Released;
+    public bool IsMouseRightClicked() => IsMouseRightDown() && _previousMouseState.RightButton == ButtonState.Released;
+    public bool IsMouseMiddleClick() => IsMouseMiddleDown() && _previousMouseState.MiddleButton == ButtonState.Released;
 }
