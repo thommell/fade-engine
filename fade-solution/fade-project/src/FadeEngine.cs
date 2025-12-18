@@ -1,9 +1,9 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using fade_project.containers;
 using fade_project.systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace fade_project;
 
@@ -12,27 +12,35 @@ public sealed class FadeEngine {
     private SpriteBatch _spriteBatch;
     private ContentManager _content;
     
-    // Sub-systems
-    private readonly InputSystem _input = new();
-    private readonly AssetSystem _assets = new();
-    private readonly SceneManager _sceneManager = new();
+    private readonly List<SubSystem> _systems = [];
 
     public void Initialize() {
-        _sceneManager.Initialize();
+        AddSystem(new InputSystem());
+        AddSystem(new SceneManager());
+        for (int i = 0; i < _systems.Count; i++) {
+            _systems[i].Initialize();
+        }
     }
+    
     public void Load(SpriteBatch spriteBatch, ContentManager content) {
         _spriteBatch = spriteBatch;
         _content = content;
-        _sceneManager.Load();
+        for (int i = 0; i < _systems.Count; i++) {
+            _systems[i].Load();
+        }
     }
-    public void Unload() {}
-
+    
     public void Update(GameTime gameTime) {
-        //TODO:
-        // Refactor all these methods to later only update/draw a SubSystems List.
-        _input.Update(gameTime);
-        _sceneManager.Update(gameTime);
+        for (int i = 0; i < _systems.Count; i++) {
+            _systems[i].Update(gameTime);
+        }
     }
     public void Draw(SpriteBatch spriteBatch) {
+        for (int  i = 0; i < _systems.Count; i++) {
+            _systems[i].Draw(spriteBatch);
+        }
+    }
+    private void AddSystem(SubSystem system) {
+        _systems.Add(system);
     }
 }
