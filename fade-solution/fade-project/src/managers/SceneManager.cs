@@ -9,28 +9,28 @@ using Microsoft.Xna.Framework.Input;
 
 namespace fade_project.systems;
 
-public sealed class SceneManager {
+public sealed class SceneManager : SubSystem{
     private Dictionary<string, Scene> _scenes = new();
     private Scene _activeScene;
     private bool _isInitialized;
     private bool _isLoaded;
     public Scene GetActiveScene() => _activeScene ??= new TestScene();
 
-    public void Initialize() {
+    public override void Initialize() {
         if (_isInitialized) return;
         CreateScenes();
     }
 
-    public void Load() {
+    public override void Load() {
         if (_isLoaded) return;
         ChangeScene(_scenes.FirstOrDefault().Value);
         _isLoaded = true;
     }
     
-    public void Update(GameTime gameTime) {
+    public override void Update(GameTime gameTime) {
         _activeScene?.Update(gameTime);
     }
-    public void Draw(SpriteBatch spriteBatch) {
+    public override void Draw(SpriteBatch spriteBatch) {
         _activeScene?.Draw(spriteBatch);
     }
     public void RequestSceneChange(string sceneName) {

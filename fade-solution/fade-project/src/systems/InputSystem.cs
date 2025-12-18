@@ -1,16 +1,17 @@
-﻿using Microsoft.Xna.Framework;
+﻿using fade_project.containers;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace fade_project.systems;
 
-public sealed class InputSystem {
+public sealed class InputSystem : SubSystem {
     private MouseState _mouseState;
     private KeyboardState _kbState;
     
     private MouseState _previousMouseState;
     private KeyboardState _previousKbState;
     
-    public void Update(GameTime gameTime) {
+    public override void Update(GameTime gameTime) {
         // KB
         _previousKbState = _kbState;
         _kbState = Keyboard.GetState();
