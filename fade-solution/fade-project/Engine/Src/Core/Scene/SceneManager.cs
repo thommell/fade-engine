@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fade_project.containers;
+using fade_project.Core.Services;
 using fade_project.testbed.scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,8 +10,8 @@ using Microsoft.Xna.Framework.Input;
 
 namespace fade_project.systems;
 
-public sealed class SceneManager : SubSystem{
-    private Dictionary<string, Scene> _scenes = new();
+public sealed class SceneManager : Service {
+    private readonly Dictionary<string, Scene> _scenes = new();
     private Scene _activeScene;
     private bool _isInitialized;
     private bool _isLoaded;
@@ -21,7 +22,7 @@ public sealed class SceneManager : SubSystem{
         CreateScenes();
     }
 
-    public override void Load() {
+    public override void Load(SpriteBatch spriteBatch) {
         if (_isLoaded) return;
         ChangeScene(_scenes.FirstOrDefault().Value);
         _isLoaded = true;
@@ -48,13 +49,13 @@ public sealed class SceneManager : SubSystem{
         _activeScene?.OnExit();
         _activeScene = newScene;
         _activeScene.OnEnter();
-        //TODO: Replace to custom logger later
         Console.WriteLine($"Changed scene to {newScene.GetType().Name}!");
     }
 
     private void CreateScenes() {
         _scenes.TryAdd("test", new TestScene());
         _scenes.TryAdd("test2", new TestScene2());
+        
         
         _isInitialized = true;
     }

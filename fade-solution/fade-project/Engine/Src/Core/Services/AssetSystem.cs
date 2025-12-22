@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using fade_project.containers;
+using fade_project.Core.Services;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace fade_project.systems;
 
-public sealed class AssetSystem : SubSystem{
+public sealed class AssetSystem  {
     private Dictionary<string, Texture2D> _textures = [];
     public void AddTexture(string name, Texture2D texture) {
         if (_textures.TryGetValue(name, out Texture2D val)) return;
