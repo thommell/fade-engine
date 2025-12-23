@@ -23,10 +23,9 @@ internal sealed class ServiceManager {
         foreach (KeyValuePair<Type, Service> service in Services) {
             service.Value.Load(spriteBatch, content);
         }
-        LateLoad(spriteBatch, content);
     }
 
-    private void LateLoad(SpriteBatch spriteBatch, ContentManager content) {
+    public void LateLoad(SpriteBatch spriteBatch, ContentManager content) {
         foreach (KeyValuePair<Type, Service> service in Services) {
             service.Value.LateLoad(spriteBatch, content);
         }

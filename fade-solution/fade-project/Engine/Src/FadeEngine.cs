@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using fade_project.Core.Event;
 using fade_project.Core.Services;
+using fade_project.Core.Services.Derived;
 using fade_project.Layers;
 using fade_project.systems;
 using Microsoft.Xna.Framework;
@@ -12,9 +14,11 @@ namespace fade_project;
 public sealed class FadeEngine {
     private readonly Framework _framework = new();
     public void Initialize() {
-        ServiceManager.Instance.AddService(new SceneManager());
+        ServiceManager.Instance.AddService(new SceneService());
         ServiceManager.Instance.AddService(new InputService());
         ServiceManager.Instance.AddService(new AssetService());
+        ServiceManager.Instance.AddService(new EventService());
+        ServiceManager.Instance.AddService(new CollisionService());
         ServiceManager.Instance.Initialize();
         _framework.Initialize();
     }
@@ -22,6 +26,11 @@ public sealed class FadeEngine {
     public void Load(SpriteBatch spriteBatch, ContentManager content) {
         ServiceManager.Instance.Load(spriteBatch, content);
         _framework.Load(spriteBatch, content);
+        ServiceManager.Instance.LateLoad(spriteBatch, content);
+    }
+
+    public void LateLoad(SpriteBatch spriteBatch, ContentManager content) {
+        ServiceManager.Instance.LateLoad(spriteBatch, content);
     }
     
     public void Update(GameTime gameTime) {

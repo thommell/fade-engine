@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using fade_project.Core.Components.BaseAbstract.BaseAbstract;
 using fade_project.Core.Entities.Abstract;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -46,6 +51,19 @@ public abstract class Scene {
     
     // Destroy later important systems here
     public virtual void OnExit() {}
+
+    public List<T> GetObjectsOfType<T>() where T : Component {
+        ConcurrentBag<T> objects = [];
+            Parallel.ForEach(_objectsInScene, obj => {
+                T match = obj.GetComponent<T>();
+                if (match == null) {
+                    Console.Error.WriteLine($"No object in {this} has component of {typeof(T)}");
+                    return;
+                }
+                objects.Add(match);
+            });
+        return objects.ToList();
+    }
     
     protected void AddObject(GameObject obj) {
         if (obj == null) return;

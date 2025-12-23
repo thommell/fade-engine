@@ -9,10 +9,16 @@ namespace fade_project.testbed.scenes;
 
 public class TestScene : Scene {
     public override void OnEnter() {
-        AddObject(new GameObject(new Transform(scale: new Vector2(1.5f, 1.5f)),
+        AddObject(new GameObject(new Transform(),
             components: [
                 new SpriteRenderer("Christmas tree"),
-                new PlayerMovement()
+                new PlayerMovement(),
+                new BoxCollider()
+            ]));
+        AddObject(new GameObject(new Transform(position: new Vector2(200)), 
+            components: [
+                new SpriteRenderer("Christmas tree"),
+                new BoxCollider(),
             ]));
         base.OnEnter();
     }

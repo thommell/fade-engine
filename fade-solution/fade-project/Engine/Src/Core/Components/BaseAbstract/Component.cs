@@ -8,7 +8,7 @@ public abstract class Component {
     private GameObject _owner;
     
     protected Transform Transform => _owner.Transform;
-    protected GameObject Owner => _owner;
+    public GameObject Owner => _owner;
     
     public virtual void Initialize() {}
     public virtual void Load() {}

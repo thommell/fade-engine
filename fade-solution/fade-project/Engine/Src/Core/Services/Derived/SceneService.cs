@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace fade_project.systems;
 
-public sealed class SceneManager : Service {
+public sealed class SceneService : Service {
     private readonly Dictionary<string, Scene> _scenes = new();
     private Scene _activeScene;
     private bool _isInitialized;

@@ -15,13 +15,19 @@ namespace fade_project.testbed.Scripts;
 public class PlayerMovement : Component, IUpdateableComponent {
     private InputService _input;
     private SpriteRenderer _renderer;
+    private EventService _eventService;
     private int _count = 0;
     public override void Initialize() {
         _input = GetService<InputService>();
+        _eventService = GetService<EventService>();
         _renderer = GetComponent<SpriteRenderer>();
-        FadeEvent.Attach(FadeEventType.KeyboardInput, EventTest);
-        FadeEvent.Attach(FadeEventType.KeyboardInput, EventTest2);
         base.Initialize();
+    }
+
+    public override void Load() {
+        _eventService.CreateEvent(FadeEventType.PlayerMoving);
+        _eventService.Listen(FadeEventType.PlayerMoving, EventTest);
+        base.Load();
     }
 
     public void Update(GameTime gameTime) {
@@ -47,6 +53,6 @@ public class PlayerMovement : Component, IUpdateableComponent {
         if (newPosition == Vector2.Zero) return;
         newPosition.Normalize();
         Owner.Transform.Translate(newPosition);
-        FadeEvent.Invoke(FadeEventType.KeyboardInput);
+        _eventService.InvokeEvent(FadeEventType.PlayerMoving);
     }
 }

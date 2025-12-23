@@ -10,9 +10,11 @@ public sealed class SpriteRenderer : Component, IDrawableComponent {
     private Texture2D _texture;
     private string _textureName;
     private Color _color = Color.White;
-
+    
     private AssetService _assetService;
+    
     public Color Color => _color;
+    public Texture2D Texture => _texture;
     public SpriteRenderer(string textureName) {
         _textureName = textureName;
     }
@@ -22,7 +24,7 @@ public sealed class SpriteRenderer : Component, IDrawableComponent {
         base.Initialize();
     }
     public override void Load() {
-        _texture = GetTexture(_textureName);
+        _texture = SetTexture(_textureName);
         if (Transform != null && _texture != null) {
             Transform.SetOrigin(new Vector2(_texture.Width * 0.5f, _texture.Height * 0.5f));
         }
@@ -36,5 +38,5 @@ public sealed class SpriteRenderer : Component, IDrawableComponent {
 
     public void SetColor(Color color) => _color = color;
 
-    private Texture2D GetTexture(string textureName) => _assetService.GetTexture(textureName);
+    private Texture2D SetTexture(string textureName) => _assetService.GetTexture(textureName);
 }
