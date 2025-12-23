@@ -28,7 +28,6 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Engine\" />
-      <Folder Include="Engine\Src\Core\Systems\" />
       <Folder Include="Engine\Src\Helpers\" />
     </ItemGroup>
     <Target Name="RestoreDotnetTools" BeforeTargets="CollectPackageReferences">

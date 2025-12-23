@@ -2,35 +2,44 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace fade_project.Core.Services;
 
-public sealed class ServiceManager {
+internal sealed class ServiceManager {
     private Dictionary<Type, Service> _services = [];
     private static ServiceManager _instance;
     
     public Dictionary<Type, Service> Services => _services;
-    public static ServiceManager Instance => _instance ??= new ServiceManager();
+    internal static ServiceManager Instance => _instance ??= new ServiceManager();
 
     public void Initialize() {
-        foreach (KeyValuePair<Type, Service> service in _services) {
+        foreach (KeyValuePair<Type, Service> service in Services) {
             service.Value.Initialize();
         }
     }
-    public void Load(SpriteBatch spriteBatch) {
-        foreach (KeyValuePair<Type, Service> service in _services) {
-            service.Value.Load(spriteBatch);
+    public void Load(SpriteBatch spriteBatch, ContentManager content) {
+        foreach (KeyValuePair<Type, Service> service in Services) {
+            service.Value.Load(spriteBatch, content);
+        }
+        LateLoad(spriteBatch, content);
+    }
+
+    private void LateLoad(SpriteBatch spriteBatch, ContentManager content) {
+        foreach (KeyValuePair<Type, Service> service in Services) {
+            service.Value.LateLoad(spriteBatch, content);
         }
     }
+    
     public void Update(GameTime gameTime) {
-        foreach (KeyValuePair<Type, Service> service in _services) {
+        foreach (KeyValuePair<Type, Service> service in Services) {
             service.Value.Update(gameTime);
         }
     }
 
     public void Draw(SpriteBatch spriteBatch) {
-        foreach (KeyValuePair<Type, Service> service in _services) {
+        foreach (KeyValuePair<Type, Service> service in Services) {
             service.Value.Draw(spriteBatch);
         }
     }
@@ -40,5 +49,5 @@ public sealed class ServiceManager {
         if (service == null) return;
         _services.Add(service.GetType(), service);
     } 
-    internal T GetService<T>() where T : Service => (T)_services[typeof(T)];
+    internal T GetService<T>() where T : Service => (T)Services[typeof(T)];
 }

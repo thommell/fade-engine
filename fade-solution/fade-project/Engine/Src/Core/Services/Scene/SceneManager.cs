@@ -5,6 +5,7 @@ using fade_project.containers;
 using fade_project.Core.Services;
 using fade_project.testbed.scenes;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -16,13 +17,12 @@ public sealed class SceneManager : Service {
     private bool _isInitialized;
     private bool _isLoaded;
     public Scene GetActiveScene() => _activeScene ??= new TestScene();
-
     public override void Initialize() {
         if (_isInitialized) return;
         CreateScenes();
     }
 
-    public override void Load(SpriteBatch spriteBatch) {
+    public override void LateLoad(SpriteBatch spriteBatch, ContentManager content) {
         if (_isLoaded) return;
         ChangeScene(_scenes.FirstOrDefault().Value);
         _isLoaded = true;
@@ -37,7 +37,6 @@ public sealed class SceneManager : Service {
     public void RequestSceneChange(string sceneName) {
         //TODO: Add log info that scene doesnt exist
         if (!_scenes.TryGetValue(sceneName, out Scene newScene) || newScene == _activeScene) {
-            //TODO: use custom logger
             Console.WriteLine("Scene is null or already active.");
             return;
         }

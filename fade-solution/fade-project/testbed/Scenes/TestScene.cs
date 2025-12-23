@@ -9,7 +9,7 @@ namespace fade_project.testbed.scenes;
 
 public class TestScene : Scene {
     public override void OnEnter() {
-        AddObject(new GameObject(new Transform(),
+        AddObject(new GameObject(new Transform(scale: new Vector2(1.5f, 1.5f)),
             components: [
                 new SpriteRenderer("Christmas tree"),
                 new PlayerMovement()

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using fade_project.Core.Globals;
 using fade_project.Core.Services;
 using fade_project.Layers;
 using fade_project.systems;
@@ -11,23 +10,18 @@ using Microsoft.Xna.Framework.Graphics;
 namespace fade_project;
 
 public sealed class FadeEngine {
-    // Add TimeService
-    // Add InputService
-    // Add SceneManager
-    
-    private readonly SceneManager _sceneManager = new();
     private readonly Framework _framework = new();
-
     public void Initialize() {
         ServiceManager.Instance.AddService(new SceneManager());
         ServiceManager.Instance.AddService(new InputService());
+        ServiceManager.Instance.AddService(new AssetService());
         ServiceManager.Instance.Initialize();
         _framework.Initialize();
     }
     
     public void Load(SpriteBatch spriteBatch, ContentManager content) {
+        ServiceManager.Instance.Load(spriteBatch, content);
         _framework.Load(spriteBatch, content);
-        ServiceManager.Instance.Load(spriteBatch);
     }
     
     public void Update(GameTime gameTime) {
