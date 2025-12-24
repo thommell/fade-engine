@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using fade_project.Core.Components.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.Interfaces;
@@ -13,6 +15,7 @@ public class GameObject {
     private bool _isEnabled;
 
     private Dictionary<Type, Component> _components = [];
+    private Dictionary<Type, List<Component>> _compInheritTree = [];
     private List<IDrawableComponent> _drawableComponents = [];
     private List<IUpdateableComponent> _updateableComponents = [];
     private Transform _transform;
@@ -56,11 +59,21 @@ public class GameObject {
     // Returns matching T value given by user from the Component map.
     public T GetComponent<T>() where T : Component {
         Type component = typeof(T);
-        if (_components.TryGetValue(component, out Component match)) {
+        
+        if (_components.TryGetValue(component, out var match)) {
             return (T)match;
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Searches and returns different Component types.
+    /// </summary>
+    /// <typeparam name="T">Can only be Component or FadeComponent</typeparam>
+    /// <returns></returns>
+    public List<T> GetComponents<T>() where T : Component {
+        return _compInheritTree.TryGetValue(typeof(T), out List<Component> list) ? list.Cast<T>().ToList() : [];
     }
 
     // NOT the Component.Initialize call, this makes sure all early
@@ -93,6 +106,16 @@ public class GameObject {
 
     private void AddComponent(Component t = null) {
         if (t == null) return; // Logger?
-        _components.Add(t.GetType(), t);
+        Type type = t.GetType();
+        // Hardcoded to check type object as Component shouldn't have a BaseClass other than object.
+        Type baseType = type.BaseType == typeof(object) ? typeof(Component) : t.GetType().BaseType;
+        
+        if (!_compInheritTree.TryGetValue(baseType!, out List<Component> list)) {
+            list = [];
+            _compInheritTree[baseType] = list;
+        }        
+        
+        list.Add(t);
+        _components.Add(type, t);
     }
 }

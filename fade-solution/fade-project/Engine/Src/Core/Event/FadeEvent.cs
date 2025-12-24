@@ -17,11 +17,11 @@ public sealed class FadeEvent {
             return;
         }
 
-        SetInvokeStats(true);
+        ChangeStatus(true);
         foreach (Action action in _eventQueue) {
             action.Invoke();
         }
-        SetInvokeStats(false);
+        ChangeStatus(false);
     }
 
     public void AttachListener(Action callback) {
@@ -35,5 +35,5 @@ public sealed class FadeEvent {
         _eventQueue.Clear();
         _eventQueue = null;
     }
-    private void SetInvokeStats(bool invokingStatus) =>  _isInvoking = invokingStatus;
+    private void ChangeStatus(bool invokingStatus) =>  _isInvoking = invokingStatus;
 }

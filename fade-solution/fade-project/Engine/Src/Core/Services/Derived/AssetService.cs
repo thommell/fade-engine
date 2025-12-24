@@ -24,7 +24,7 @@ public sealed class AssetService : Service {
         return value;
     }
 
-    // DEBUG
+    // Debug
     private void AddAllTextures() {
         AddTexture("Christmas tree");
     }

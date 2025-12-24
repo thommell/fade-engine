@@ -1,6 +1,7 @@
 namespace fade_project.Core.Event;
 public enum FadeEventType {
-    PlayerMoving,
+    PlayerMoved,
+    PlayerCollided,
     LeftMouseClick,
     RightMouseClick,
     MouseMovement,

@@ -5,7 +5,7 @@ using fade_project.Core.Services;
 namespace fade_project.Core.Event;
 
 /// <summary>
-/// Service for managing all the events in the engine.
+/// Service for managing all the globally needed events in the engine.
 /// </summary>
 public sealed class EventService : Service {
     private Dictionary<FadeEventType, FadeEvent> _events = [];

@@ -15,7 +15,7 @@ public class TestScene : Scene {
                 new PlayerMovement(),
                 new BoxCollider()
             ]));
-        AddObject(new GameObject(new Transform(position: new Vector2(200)), 
+        AddObject(new GameObject(new Transform(position: new Vector2(80)), 
             components: [
                 new SpriteRenderer("Christmas tree"),
                 new BoxCollider(),
