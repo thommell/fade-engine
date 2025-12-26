@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using fade_project.containers;
 using fade_project.Core.Services;
+using fade_project.Core.Services.Derived;
+using fade_project.Core.Services.Enums;
 using fade_project.testbed.scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -17,7 +19,7 @@ public sealed class SceneService : Service {
     private bool _isInitialized;
     private bool _isLoaded;
     public Scene GetActiveScene() => _activeScene ??= new TestScene();
-    public override void Initialize() {
+    public override void Initialize(ContentManager content) {
         if (_isInitialized) return;
         CreateScenes();
     }
@@ -37,7 +39,7 @@ public sealed class SceneService : Service {
     public void RequestSceneChange(string sceneName) {
         //TODO: Add log info that scene doesnt exist
         if (!_scenes.TryGetValue(sceneName, out Scene newScene) || newScene == _activeScene) {
-            Console.WriteLine("Scene is null or already active.");
+            Logger.Log(LogType.WARN, "Scene is null or already active.");
             return;
         }
         ChangeScene(newScene);
@@ -48,13 +50,12 @@ public sealed class SceneService : Service {
         _activeScene?.OnExit();
         _activeScene = newScene;
         _activeScene.OnEnter();
-        Console.WriteLine($"Changed scene to {newScene.GetType().Name}!");
+        Logger.Log(LogType.INFO, $"Changed scene to {newScene.GetType().Name}");
     }
 
     private void CreateScenes() {
         _scenes.TryAdd("test", new TestScene());
         _scenes.TryAdd("test2", new TestScene2());
-        
         
         _isInitialized = true;
     }

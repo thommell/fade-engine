@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using fade_project.Core.Components.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.Interfaces;
+using fade_project.Core.Event;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -19,8 +20,9 @@ public class GameObject {
     private List<IDrawableComponent> _drawableComponents = [];
     private List<IUpdateableComponent> _updateableComponents = [];
     private Transform _transform;
-
+    private readonly FadeEventCache _fadeEventCache = new();
     public Transform Transform => _transform;
+    public FadeEventCache Events => _fadeEventCache;
 
     public GameObject(Transform transform = null, bool isEnabled = true, params Component[] components) {
         transform ??= new Transform();
@@ -71,10 +73,19 @@ public class GameObject {
     /// Searches and returns different Component types.
     /// </summary>
     /// <typeparam name="T">Can only be Component or FadeComponent</typeparam>
-    /// <returns></returns>
-    public List<T> GetComponents<T>() where T : Component {
-        return _compInheritTree.TryGetValue(typeof(T), out List<Component> list) ? list.Cast<T>().ToList() : [];
+    public List<T> GetComponents<T>() where T : Component
+    {
+        if (!_compInheritTree.TryGetValue(typeof(T), out var list))
+            return [];
+
+        var result = new List<T>(list.Count);
+        foreach (var c in list)
+            result.Add((T)c);
+
+        return result;
     }
+
+
 
     // NOT the Component.Initialize call, this makes sure all early
     // added components are handled properly.

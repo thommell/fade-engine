@@ -1,6 +1,7 @@
 
 using System.Collections.Specialized;
 using fade_project.Core.Components.BaseAbstract.BaseAbstract;
+using fade_project.Core.Event.Types;
 using Microsoft.Xna.Framework;
 
 namespace fade_project.Core.Components.BaseAbstract;
@@ -23,7 +24,11 @@ public sealed class Transform : Component {
         _rotation = rotation;
     }
 
-    public void Translate(Vector2 translation) => _position += translation;
+    public void Translate(Vector2 translation) {
+        _position += translation;
+        Owner.Events.Invoke(new MoveEvent(Owner, _position));
+    }
+
     public void SetPosition(Vector2 newPosition) => _position = newPosition;
     public void SetOrigin(Vector2 newOrigin) => _origin = newOrigin;
 }
