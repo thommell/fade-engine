@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using fade_project.Core;
 using fade_project.Core.Event;
 using fade_project.Core.Services;
 using fade_project.Core.Services.Derived;
@@ -18,8 +19,7 @@ public sealed class FadeEngine {
         ServiceManager.Instance.AddService(new SceneService());
         ServiceManager.Instance.AddService(new InputService());
         ServiceManager.Instance.AddService(new AssetService());
-        ServiceManager.Instance.AddService(new CollisionService());
-        Logger.Log(LogType.INFO, "Engine has initialized successfully.");
+        this.Log(LogType.INFO, "Engine has initialized successfully.");
     }
     
     public void Load(SpriteBatch spriteBatch, ContentManager content) {
@@ -28,14 +28,10 @@ public sealed class FadeEngine {
         // Initialize HAS to be earlier than load.
         ServiceManager.Instance.Load(spriteBatch, content);
         _framework.Load(spriteBatch, content);
+        this.Log(LogType.INFO, "Engine has loaded successfully.");
         ServiceManager.Instance.LateLoad(spriteBatch, content);
-        Logger.Log(LogType.INFO, "Engine has loaded successfully.");
-        Logger.Log(LogType.INFO, "Engine has started.");
-    }
-
-    public void LateLoad(SpriteBatch spriteBatch, ContentManager content) {
-        ServiceManager.Instance.LateLoad(spriteBatch, content);
-        Logger.Log(LogType.INFO, "Engine has lateloaded successfully.");
+        this.Log(LogType.INFO, "Engine has lateloaded successfully.");
+        
     }
     
     public void Update(GameTime gameTime) {

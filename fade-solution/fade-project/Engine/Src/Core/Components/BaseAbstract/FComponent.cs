@@ -4,14 +4,15 @@ using fade_project.Core.Services;
 
 namespace fade_project.Core.Components.BaseAbstract.BaseAbstract;
 
-public abstract class Component {
+public abstract class FComponent {
     private GameObject _owner;
     
-    protected Transform Transform => _owner.Transform;
+    protected FTransform Transform => _owner.Transform;
     public GameObject Owner => _owner;
     
     public virtual void Initialize() {}
     public virtual void Load() {}
+    public virtual void LateLoad() {}
     public void SetOwner(GameObject owner) => _owner = owner;
 
     /// <summary>
@@ -20,7 +21,7 @@ public abstract class Component {
     /// <returns>The given instance of value T</returns>
     /// <typeparam name="T">The generic value of the specified Component</typeparam>
     /// <returns></returns>
-    protected T GetComponent<T>() where T : Component {
+    protected T GetComponent<T>() where T : FComponent {
         return Owner.GetComponent<T>();
     }
 

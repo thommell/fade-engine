@@ -15,17 +15,18 @@ namespace fade_project.Core.Entities.Abstract;
 public class GameObject {
     private bool _isEnabled;
 
-    private Dictionary<Type, Component> _components = [];
-    private Dictionary<Type, List<Component>> _compInheritTree = [];
+    private Dictionary<Type, FComponent> _components = [];
+    private Dictionary<Type, List<FComponent>> _compInheritTree = [];
     private List<IDrawableComponent> _drawableComponents = [];
     private List<IUpdateableComponent> _updateableComponents = [];
-    private Transform _transform;
+    private List<IFixedUpdatable> _fixedUpdatableComponents = [];
+    private FTransform _transform;
     private readonly FadeEventCache _fadeEventCache = new();
-    public Transform Transform => _transform;
+    public FTransform Transform => _transform;
     public FadeEventCache Events => _fadeEventCache;
 
-    public GameObject(Transform transform = null, bool isEnabled = true, params Component[] components) {
-        transform ??= new Transform();
+    public GameObject(FTransform transform = null, bool isEnabled = true, params FComponent[] components) {
+        transform ??= new FTransform();
         _transform = transform;
         _isEnabled = isEnabled;
         Initialize(components);
@@ -33,14 +34,15 @@ public class GameObject {
 
     public void Load() {
         // Initialize first (Unity awake-like) -> "get" all components, then Load (Unity's Start)
-        foreach (KeyValuePair<Type, Component> component in _components) {
+        foreach (KeyValuePair<Type, FComponent> component in _components) {
             if (!_isEnabled) break;
             component.Value.Initialize();
         }
 
-        foreach (KeyValuePair<Type, Component> component in _components) {
+        foreach (KeyValuePair<Type, FComponent> component in _components) {
             if (!_isEnabled) break;
             component.Value.Load();
+            component.Value.LateLoad();
         }
     }
 
@@ -51,15 +53,22 @@ public class GameObject {
         }
     }
 
-    public void Update(GameTime gameTime) {
+    public void Update(float deltaTime) {
         for (int i = 0; i < _updateableComponents.Count; i++) {
             if (!_isEnabled) continue;
-            _updateableComponents[i].Update(gameTime);
+            _updateableComponents[i].Update(deltaTime);
+        }
+    }
+
+    public void FixedUpdate(float fixedDeltaTime) {
+        for (int i = 0; i < _fixedUpdatableComponents.Count; i++) {
+            if (!_isEnabled) continue;
+            _fixedUpdatableComponents[i].FixedUpdate(fixedDeltaTime);
         }
     }
 
     // Returns matching T value given by user from the Component map.
-    public T GetComponent<T>() where T : Component {
+    public T GetComponent<T>() where T : FComponent {
         Type component = typeof(T);
         
         if (_components.TryGetValue(component, out var match)) {
@@ -73,7 +82,7 @@ public class GameObject {
     /// Searches and returns different Component types.
     /// </summary>
     /// <typeparam name="T">Can only be Component or FadeComponent</typeparam>
-    public List<T> GetComponents<T>() where T : Component
+    public List<T> GetComponents<T>() where T : FComponent
     {
         if (!_compInheritTree.TryGetValue(typeof(T), out var list))
             return [];
@@ -85,11 +94,9 @@ public class GameObject {
         return result;
     }
 
-
-
     // NOT the Component.Initialize call, this makes sure all early
     // added components are handled properly.
-    private void Initialize(Component[] components) {
+    private void Initialize(FComponent[] components) {
         AddComponent(_transform);
 
         for (int i = 0; i < components.Length; i++) {
@@ -100,28 +107,30 @@ public class GameObject {
         SetupOwnership();
     }
 
-    private void SetupInterfaces(Component[] components) {
-        foreach (Component component in components) {
+    private void SetupInterfaces(FComponent[] components) {
+        foreach (FComponent component in components) {
             if (component is IDrawableComponent drawableComponent)
                 _drawableComponents.Add(drawableComponent);
             if (component is IUpdateableComponent updateableComponent)
                 _updateableComponents.Add(updateableComponent);
+            if (component is IFixedUpdatable fixedUpdatableComponent)
+                _fixedUpdatableComponents.Add(fixedUpdatableComponent);
         }
     }
 
     private void SetupOwnership() {
-        foreach (KeyValuePair<Type, Component> component in _components) {
+        foreach (KeyValuePair<Type, FComponent> component in _components) {
             component.Value.SetOwner(this);
         }
     }
 
-    private void AddComponent(Component t = null) {
+    private void AddComponent(FComponent t = null) {
         if (t == null) return; // Logger?
         Type type = t.GetType();
         // Hardcoded to check type object as Component shouldn't have a BaseClass other than object.
-        Type baseType = type.BaseType == typeof(object) ? typeof(Component) : t.GetType().BaseType;
+        Type baseType = type.BaseType == typeof(object) ? typeof(FComponent) : t.GetType().BaseType;
         
-        if (!_compInheritTree.TryGetValue(baseType!, out List<Component> list)) {
+        if (!_compInheritTree.TryGetValue(baseType!, out List<FComponent> list)) {
             list = [];
             _compInheritTree[baseType] = list;
         }        

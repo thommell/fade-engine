@@ -8,21 +8,20 @@ using Microsoft.Xna.Framework.Input;
 
 namespace fade_project.testbed.Scripts;
 
-public class PlayerMovement : FadeComponent, IUpdateableComponent {
-    private SpriteRenderer _renderer;
+public class ShipMovement : FadeComponent, IFixedUpdatable{
+    private FSpriteRenderer _renderer;
     private InputService _inputService;
+    private FRigidBody _rb;
+    
     public override void Initialize() {
         _inputService = GetService<InputService>();
-        _renderer = GetComponent<SpriteRenderer>();
+        _renderer = GetComponent<FSpriteRenderer>();
+        _rb = GetComponent<FRigidBody>();
         base.Initialize();
     }
 
-    public override void Load() {
-        base.Load();
-    }
-
     protected override void OnCollisionEnter(CollisionEnterEvent data) {
-        _renderer.SetColor(Color.Orange);
+        _renderer.SetColor(Color.Black);
         base.OnCollisionEnter(data);
     }
 
@@ -30,12 +29,7 @@ public class PlayerMovement : FadeComponent, IUpdateableComponent {
         _renderer.SetColor(Color.White);
         base.OnCollisionExit(data);
     }
-
-
-    public void Update(GameTime gameTime) {
-        Move();
-    }
-
+    
     private void Move() {
         Vector2 newPosition = Vector2.Zero;
         if (_inputService.IsKeyDown(Keys.W)) newPosition.Y -= 1;
@@ -45,5 +39,9 @@ public class PlayerMovement : FadeComponent, IUpdateableComponent {
         if (newPosition == Vector2.Zero) return;
         newPosition.Normalize();
         Owner.Transform.Translate(newPosition);
+    }
+
+    public void FixedUpdate(float fixedDeltaTime) {
+        Move();
     }
 }

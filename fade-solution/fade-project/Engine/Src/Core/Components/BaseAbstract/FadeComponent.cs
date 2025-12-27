@@ -2,7 +2,7 @@ using fade_project.Core.Event.Types;
 
 namespace fade_project.Core.Components.BaseAbstract.BaseAbstract;
 
-public abstract class FadeComponent : Component {
+public abstract class FadeComponent : FComponent {
     public override void Load() {
         Owner.Events.Listen<CollisionEnterEvent>(OnCollisionEnter);
         Owner.Events.Listen<CollisionExitEvent>(OnCollisionExit);

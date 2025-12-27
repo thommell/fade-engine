@@ -1,53 +1,53 @@
-using System.Buffers;
 using System.Collections.Generic;
 using fade_project.containers;
 using fade_project.Core.Components.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.BaseAbstract;
+using fade_project.Core.Components.BaseAbstract.Interfaces;
 using fade_project.Core.Entities.Abstract;
 using fade_project.Core.Event.Types;
 using fade_project.Core.Services.Enums;
 using fade_project.Engine.Core.Services.Derived.Collision;
 using fade_project.systems;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace fade_project.Core.Services.Derived;
     
-public sealed class CollisionService : Service {
+public sealed class CollisionManager : FComponent, IFixedUpdatable {
     private Scene _activeScene;
-    private List<BoxCollider> _colliders = [];
-    private readonly HashSet<ActiveCollisionPair> _activeCollisions = [];
-    public override void LateLoad(SpriteBatch spriteBatch, ContentManager content) {
+    private List<FBoxCollider> _colliders = [];
+    private readonly HashSet<CollisionPair> _activeCollisions = [];
+    public override void LateLoad() {
         _activeScene = ServiceManager.Instance.GetService<SceneService>().GetActiveScene();
         GetAllColliders();
     }
 
-    public override void Update(GameTime gameTime) {
+    public void FixedUpdate(float fixedDeltaTime) {
         UpdateCollisions();
-        base.Update(gameTime);
     }
 
     private void UpdateCollisions() {
         if (_colliders.Count < 2) return;
         
-        HashSet<ActiveCollisionPair> checkedPairs = new HashSet<ActiveCollisionPair>();
+        HashSet<CollisionPair> checkedPairs = [];
 
         for (int i = 0; i < _colliders.Count; i++) {
-            BoxCollider a = _colliders[i];
+            FBoxCollider a = _colliders[i];
             for (int j = i + 1; j < _colliders.Count; j++) {
-                BoxCollider b = _colliders[j];
-                var pair = new ActiveCollisionPair(a, b);
-                bool isColliding = AreObjectsColliding(a, b);
+                FBoxCollider b = _colliders[j];
+                var pair = new CollisionPair(a, b);
+                bool isColliding = AreObjectsColliding(pair);
                 bool wasColliding = _activeCollisions.Contains(pair);
 
                 if (isColliding) {
                     checkedPairs.Add(pair);
                     if (!wasColliding) {
+                        a.IsColliding = true;
+                        b.IsColliding = true;
                         OnCollisionEnter(a.Owner, b.Owner);
                     }
                 }
                 else if (wasColliding) {
+                    a.IsColliding = false;
+                    b.IsColliding = false;
                     OnCollisionExit(a.Owner, b.Owner);
                 }
             }
@@ -58,21 +58,23 @@ public sealed class CollisionService : Service {
         }
     }
 
-    private bool AreObjectsColliding(BoxCollider coll1, BoxCollider coll2) {
-        return coll1.Hitbox.Intersects(coll2.Hitbox);
+    private bool AreObjectsColliding(CollisionPair pair) {
+        return pair.ColliderA.Hitbox.Intersects(pair.ColliderB.Hitbox);
     }
 
     private void OnCollisionEnter(GameObject other, GameObject itself) {
         itself.Events.Invoke(new CollisionEnterEvent(self: itself, other: other));
-        other.Events.Invoke(new CollisionEnterEvent(self: itself, other: other));
-        Logger.Log(LogType.INFO, $"{itself.GetType().Name} and {other.GetType().Name} have started colliding.");
+        other.Events.Invoke(new CollisionEnterEvent(self: other, other: itself));
+        this.Log(LogType.INFO, $"{itself.GetType().Name} and {other.GetType().Name} have started colliding.");
     }
 
     private void OnCollisionExit(GameObject other, GameObject self) {
         self.Events.Invoke(new CollisionExitEvent(self: self, other: other));
-        other.Events.Invoke(new CollisionExitEvent(self: self, other: other));
-        Logger.Log(LogType.INFO, $"{self.GetType().Name} and {other.GetType().Name} have stopped colliding.");
+        other.Events.Invoke(new CollisionExitEvent(self: other, other: self));
+        this.Log(LogType.INFO, $"{self.GetType().Name} and {other.GetType().Name} have stopped colliding.");
     }
 
-    private void GetAllColliders() => _colliders = _activeScene.GetObjectsOfType<BoxCollider>();
+    private void GetAllColliders() {
+        _colliders = _activeScene.GetObjectsOfType<FBoxCollider>();
+    }
 }

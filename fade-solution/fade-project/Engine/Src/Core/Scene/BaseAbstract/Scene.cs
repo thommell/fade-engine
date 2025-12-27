@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using fade_project.Core;
 using fade_project.Core.Components.BaseAbstract.BaseAbstract;
 using fade_project.Core.Entities.Abstract;
+using fade_project.Core.Services.Enums;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -38,30 +40,35 @@ public abstract class Scene {
         }
     }
 
-    public virtual void Update(GameTime gameTime) {
+    public virtual void Update(float deltaTime) {
         // Check if there are new objects waiting to be added
         if (IsAddingObjects) {
             AddObjectsToScene();
         }
         
         for (int i = 0; i < _objectsInScene.Count; i++) {
-            _objectsInScene[i].Update(gameTime);
+            _objectsInScene[i].Update(deltaTime);
+        }
+    }
+
+    public void FixedUpdate(float fixedDeltaTime) {
+        for (int i = 0; i < _objectsInScene.Count; i++) {
+            _objectsInScene[i].FixedUpdate(fixedDeltaTime);
         }
     }
     
-    // Destroy later important systems here
     public virtual void OnExit() {}
 
-    public List<T> GetObjectsOfType<T>() where T : Component {
+    public List<T> GetObjectsOfType<T>() where T : FComponent {
         ConcurrentBag<T> objects = [];
             Parallel.ForEach(_objectsInScene, obj => {
                 T match = obj.GetComponent<T>();
-                if (match == null) {
-                    Console.Error.WriteLine($"No object in {this} has component of {typeof(T)}");
-                    return;
-                }
+                if (match == null) return;
                 objects.Add(match);
             });
+            if (objects.IsEmpty) {
+                this.Log(LogType.FATAL, $"No object in {this.GetType().Name} has a single component of {typeof(T).Name}");
+            }
         return objects.ToList();
     }
     
