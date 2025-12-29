@@ -9,6 +9,7 @@ public sealed class InputService : Service {
     private KeyboardState _currentKbState;
     private MouseState _previousMouseState;
     private KeyboardState _previousKbState;
+    private SceneService _scene;
     
     public override void Update(GameTime gameTime) {
         _previousKbState = _currentKbState;

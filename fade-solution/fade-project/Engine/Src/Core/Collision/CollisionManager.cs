@@ -39,11 +39,11 @@ public sealed class CollisionManager : FComponent, IFixedUpdatable {
 
                 if (isColliding) {
                     checkedPairs.Add(pair);
-                    if (!wasColliding) {
-                        a.IsColliding = true;
-                        b.IsColliding = true;
-                        OnCollisionEnter(a.Owner, b.Owner);
-                    }
+                    if (wasColliding) continue;
+                    
+                    a.IsColliding = true;
+                    b.IsColliding = true;
+                    OnCollisionEnter(a.Owner, b.Owner);
                 }
                 else if (wasColliding) {
                     a.IsColliding = false;

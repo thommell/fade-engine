@@ -10,7 +10,6 @@ public sealed class FSpriteRenderer : FComponent, IDrawableComponent {
     private Texture2D _texture;
     private string _textureName;
     private Color _color = Color.White;
-    
     private AssetService _assetService;
     
     public Color Color => _color;
@@ -33,9 +32,10 @@ public sealed class FSpriteRenderer : FComponent, IDrawableComponent {
 
     public void Draw(SpriteBatch spriteBatch) {
         if (_texture == null) return;
+        Vector2 drawPos = Vector2.Round(Transform.Position);
         spriteBatch.Draw(
             _texture,
-            Transform.Position,
+            drawPos,
             null,
             _color,
             MathHelper.ToDegrees(Transform.Rotation),

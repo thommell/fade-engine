@@ -1,14 +1,16 @@
+using fade_project.Core;
 using fade_project.Core.Components.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.Interfaces;
 using fade_project.Core.Event.Types;
+using fade_project.Core.Services.Enums;
 using fade_project.systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace fade_project.testbed.Scripts;
 
-public class ShipMovement : FadeComponent, IFixedUpdatable{
+public class ShipMovement : FadeComponent, IFixedUpdatable, IUpdateableComponent {
     private FSpriteRenderer _renderer;
     private InputService _inputService;
     private FRigidBody _rb;
@@ -38,10 +40,17 @@ public class ShipMovement : FadeComponent, IFixedUpdatable{
         if (_inputService.IsKeyDown(Keys.D)) newPosition.X += 1;
         if (newPosition == Vector2.Zero) return;
         newPosition.Normalize();
-        Owner.Transform.Translate(newPosition);
+        _rb.AddForce(newPosition);
     }
-
     public void FixedUpdate(float fixedDeltaTime) {
         Move();
+    }
+    private void Boost() {
+        if (_inputService.IsKeyPressed(Keys.Space)) {
+            _rb.AddForce(_rb.GetDirection() * 10, ForceTypes.Explosive);
+        }
+    }
+    public void Update(float deltaTime) {
+        Boost();
     }
 }
