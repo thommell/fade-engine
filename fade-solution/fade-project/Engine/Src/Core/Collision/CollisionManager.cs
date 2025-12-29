@@ -11,7 +11,7 @@ using fade_project.systems;
 
 namespace fade_project.Core.Services.Derived;
     
-public sealed class CollisionManager : FComponent, IFixedUpdatable {
+public sealed class CollisionManager : FComponent, IFixedUpdatableComponent {
     private Scene _activeScene;
     private List<FBoxCollider> _colliders = [];
     private readonly HashSet<CollisionPair> _activeCollisions = [];

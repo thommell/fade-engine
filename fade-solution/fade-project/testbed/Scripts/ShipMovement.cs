@@ -10,11 +10,12 @@ using Microsoft.Xna.Framework.Input;
 
 namespace fade_project.testbed.Scripts;
 
-public class ShipMovement : FadeComponent, IFixedUpdatable, IUpdateableComponent {
+public class ShipMovement : FadeComponent, IFixedUpdatableComponent, IUpdateableComponent {
     private FSpriteRenderer _renderer;
     private InputService _inputService;
     private FRigidBody _rb;
-    
+    private float _speed = 15f;
+
     public override void Initialize() {
         _inputService = GetService<InputService>();
         _renderer = GetComponent<FSpriteRenderer>();
@@ -40,14 +41,14 @@ public class ShipMovement : FadeComponent, IFixedUpdatable, IUpdateableComponent
         if (_inputService.IsKeyDown(Keys.D)) newPosition.X += 1;
         if (newPosition == Vector2.Zero) return;
         newPosition.Normalize();
-        _rb.AddForce(newPosition);
+        _rb.AddForce(newPosition * _speed);
     }
     public void FixedUpdate(float fixedDeltaTime) {
         Move();
     }
     private void Boost() {
         if (_inputService.IsKeyPressed(Keys.Space)) {
-            _rb.AddForce(_rb.GetDirection() * 10, ForceTypes.Explosive);
+            _rb.AddForce(_rb.GetNormalizedVelocity() * 10, ForceTypes.EXPLOSIVE);
         }
     }
     public void Update(float deltaTime) {

@@ -19,7 +19,7 @@ public class GameObject {
     private Dictionary<Type, List<FComponent>> _compInheritTree = [];
     private List<IDrawableComponent> _drawableComponents = [];
     private List<IUpdateableComponent> _updateableComponents = [];
-    private List<IFixedUpdatable> _fixedUpdatableComponents = [];
+    private List<IFixedUpdatableComponent> _fixedUpdatableComponents = [];
     private FTransform _transform;
     private readonly FadeEventCache _fadeEventCache = new();
     public FTransform Transform => _transform;
@@ -113,7 +113,7 @@ public class GameObject {
                 _drawableComponents.Add(drawableComponent);
             if (component is IUpdateableComponent updateableComponent)
                 _updateableComponents.Add(updateableComponent);
-            if (component is IFixedUpdatable fixedUpdatableComponent)
+            if (component is IFixedUpdatableComponent fixedUpdatableComponent)
                 _fixedUpdatableComponents.Add(fixedUpdatableComponent);
         }
     }
