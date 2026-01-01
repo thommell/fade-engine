@@ -2,13 +2,13 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting;
 using System.Threading;
 using System.Threading.Tasks;
 using fade_project.Core;
 using fade_project.Core.Components.BaseAbstract.BaseAbstract;
 using fade_project.Core.Entities.Abstract;
 using fade_project.Core.Services.Enums;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace fade_project.containers;
@@ -16,7 +16,10 @@ namespace fade_project.containers;
 public abstract class Scene {
     private List<GameObject> _objectsInScene = [];
     private List<GameObject> _objectsToAdd = [];
-    private List<GameObject> _objectsToRemove = []; 
+    private List<GameObject> _objectsToRemove = [];
+
+    private Dictionary<GameObject, FCollider> _colliders = [];
+
     //TODO:
     // It is dangerous to blindly remove objects during iteration,
     // We want to do this after iteration so that it is stable.
@@ -62,9 +65,11 @@ public abstract class Scene {
     public List<T> GetObjectsOfType<T>() where T : FComponent {
         ConcurrentBag<T> objects = [];
             Parallel.ForEach(_objectsInScene, obj => {
-                T match = obj.GetComponent<T>();
-                if (match == null) return;
-                objects.Add(match);
+                List<T> t = obj.GetComponents<T>();
+                if (t.Count <= 0) return;
+                foreach (var comp in t) {
+                    objects.Add(comp);
+                }
             });
             if (objects.IsEmpty) {
                 this.Log(LogType.FATAL, $"No object in {this.GetType().Name} has a single component of {typeof(T).Name}");
@@ -81,6 +86,7 @@ public abstract class Scene {
             // after to fail
             return;
         }
+
         _objectsToAdd.Add(obj);
     }
 

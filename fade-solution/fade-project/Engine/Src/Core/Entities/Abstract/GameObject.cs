@@ -70,7 +70,7 @@ public class GameObject {
     // Returns matching T value given by user from the Component map.
     public T GetComponent<T>() where T : FComponent {
         Type component = typeof(T);
-        
+
         if (_components.TryGetValue(component, out var match)) {
             return (T)match;
         }
