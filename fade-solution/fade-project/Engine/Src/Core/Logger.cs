@@ -29,8 +29,8 @@ public static class Logger {
             ? sender.GetType().Name 
             : sender.GetType().BaseType?.Name;
 
-        Console.ForegroundColor = EnumColors[type];
+        Console.BackgroundColor = EnumColors[type];
         Console.WriteLine($"[{scriptName}-{Enum.GetName(typeof(LogType), type)}] Line: {line}: {message}");
-        Console.ForegroundColor = ConsoleColor.White;
+        Console.BackgroundColor = ConsoleColor.White;
     }
 }

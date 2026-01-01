@@ -21,7 +21,7 @@ public class ColliderTest : Scene {
         AddObject(new GameObject(new FTransform(position: new Vector2(80)), 
             components: [
                 new FSpriteRenderer("Gray1"),
-                new FBoxCollider(),
+                new FCircleCollider(),
             ]));
         base.OnEnter();
     }

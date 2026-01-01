@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using fade_project.containers;
 using fade_project.Core.Components.BaseAbstract;
@@ -13,7 +14,7 @@ namespace fade_project.Core.Services.Derived;
     
 public sealed class CollisionManager : FComponent, IFixedUpdatableComponent {
     private Scene _activeScene;
-    private List<FBoxCollider> _colliders = [];
+    private List<FCollider> _colliders = [];
     private readonly HashSet<CollisionPair> _activeCollisions = [];
     public override void LateLoad() {
         _activeScene = ServiceManager.Instance.GetService<SceneService>().GetActiveScene();
@@ -30,9 +31,9 @@ public sealed class CollisionManager : FComponent, IFixedUpdatableComponent {
         HashSet<CollisionPair> checkedPairs = [];
 
         for (int i = 0; i < _colliders.Count; i++) {
-            FBoxCollider a = _colliders[i];
+            FCollider a = _colliders[i];
             for (int j = i + 1; j < _colliders.Count; j++) {
-                FBoxCollider b = _colliders[j];
+                FCollider b = _colliders[j];
                 var pair = new CollisionPair(a, b);
                 bool isColliding = AreObjectsColliding(pair);
                 bool wasColliding = _activeCollisions.Contains(pair);
@@ -59,7 +60,7 @@ public sealed class CollisionManager : FComponent, IFixedUpdatableComponent {
     }
 
     private bool AreObjectsColliding(CollisionPair pair) {
-        return pair.ColliderA.Hitbox.Intersects(pair.ColliderB.Hitbox);
+        return pair.ColliderA.Intersects(pair.ColliderB);
     }
 
     private void OnCollisionEnter(GameObject other, GameObject itself) {
@@ -75,6 +76,6 @@ public sealed class CollisionManager : FComponent, IFixedUpdatableComponent {
     }
 
     private void GetAllColliders() {
-        _colliders = _activeScene.GetObjectsOfType<FBoxCollider>();
+        _colliders = _activeScene.GetObjectsOfType<FCollider>();
     }
 }

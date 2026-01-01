@@ -11,8 +11,7 @@ public enum ForceTypes {
     EXPLOSIVE
 }
 public sealed class FRigidBody : FComponent, IFixedUpdatableComponent {
-    private const float DRAG = 10f;
-    private const float MASS = 1f;
+    private const float Drag = 10f;
     private Vector2  _velocity = Vector2.Zero;
     private Vector2 _force = Vector2.Zero;
     
@@ -40,7 +39,7 @@ public sealed class FRigidBody : FComponent, IFixedUpdatableComponent {
     private void ApplyForce(float fixedDeltaTime) {
         Vector2 accel = _force;
         _velocity += accel * fixedDeltaTime;
-        _velocity -= _velocity * DRAG * fixedDeltaTime;
+        _velocity -= _velocity * Drag * fixedDeltaTime;
         if (_velocity.LengthSquared() < 0.0125f) {
             _velocity = Vector2.Zero;
             return;

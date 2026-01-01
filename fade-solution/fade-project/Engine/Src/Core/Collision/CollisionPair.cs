@@ -1,12 +1,13 @@
 using fade_project.Core.Components.BaseAbstract;
+using fade_project.Core.Components.BaseAbstract.BaseAbstract;
 
 namespace fade_project.Engine.Core.Services.Derived.Collision;
 
 public record struct CollisionPair {
-    public readonly FBoxCollider ColliderA;
-    public readonly FBoxCollider ColliderB;
+    public readonly FCollider ColliderA;
+    public readonly FCollider ColliderB;
 
-    public CollisionPair(FBoxCollider colliderA, FBoxCollider colliderB) {
+    public CollisionPair(FCollider colliderA, FCollider colliderB) {
         ColliderA = colliderA;
         ColliderB = colliderB;
     }
