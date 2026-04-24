@@ -75,7 +75,7 @@ public class GameObject {
     /// <summary>
     /// Searches and returns different Component types.
     /// </summary>
-    /// <typeparam name="T">Can only be Component or FadeComponent</typeparam>
+    /// <typeparam name="T">Can only be FComponent or FadeComponent</typeparam>
     public List<T> GetComponents<T>() where T : FComponent
     {
         if (!compInheritTree.TryGetValue(typeof(T), out var list))

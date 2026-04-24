@@ -10,7 +10,6 @@ public sealed class FSpriteRenderer : FComponent, IDrawableComponent {
     private Texture2D texture;
     private string textureName;
     private Color color = Color.White;
-    private AssetService assetService;
     
     public Color Color => color;
     public Texture2D Texture => texture;
@@ -18,10 +17,6 @@ public sealed class FSpriteRenderer : FComponent, IDrawableComponent {
         this.textureName = textureName;
     }
     
-    public override void Initialize() {
-        assetService = GetService<AssetService>();
-        base.Initialize();
-    }
     public override void Load() {
         texture = SetTexture(textureName);
         if (Transform != null && texture != null) {
@@ -48,5 +43,5 @@ public sealed class FSpriteRenderer : FComponent, IDrawableComponent {
     }
 
     public void SetColor(Color color) => this.color = color;
-    private Texture2D SetTexture(string textureName) => assetService.GetTexture(textureName);
+    private Texture2D SetTexture(string textureName) => Assets.GetTexture(textureName);
 }

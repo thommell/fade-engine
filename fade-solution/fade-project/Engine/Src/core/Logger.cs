@@ -16,12 +16,6 @@ public enum LogSource {
     Transform,
     Unknown
 }
-
-public static class LogExtender {
-    public static void Log(this object sender, LogType type, string message) {
-        Logger.Log(sender, message, type);
-    }
-}
     
 public static class Logger {
     private static readonly Dictionary<LogType, ConsoleColor> EnumColors = new() {

@@ -1,5 +1,3 @@
-using fade_project.Core.Services;
-
 namespace fade_project.Core.Components.BaseAbstract.BaseAbstract;
 
 public abstract class FComponent {
@@ -20,17 +18,4 @@ public abstract class FComponent {
     /// <typeparam name="T">The generic value of the specified Component</typeparam>
     /// <returns></returns>
     protected T GetComponent<T>() where T : FComponent => Owner.GetComponent<T>();
-
-    /// <summary>
-    /// Provider for the main services within this Engine.
-    /// <code>
-    /// instance.GetService&lt;InputService&gt;();
-    /// </code>
-    /// <returns>The given instance of value T</returns>
-    /// </summary>
-    /// <typeparam name="T">The generic value of the specified Service.</typeparam>
-    /// <returns></returns>
-    protected T GetService<T>() where T : Service {
-        return ServiceManager.Instance.GetService<T>();
-    }
 }

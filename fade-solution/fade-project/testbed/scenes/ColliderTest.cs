@@ -10,7 +10,6 @@ namespace fade_project.testbed.scenes;
 
 public class ColliderTest : Scene {
     public override void OnEnter() {
-        AddObject(new GameObject(components: new CollisionManager()));
         AddObject(new GameObject(new FTransform(),
             components: [
                 new FSpriteRenderer("Blue"),

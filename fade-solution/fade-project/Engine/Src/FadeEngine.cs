@@ -1,5 +1,6 @@
 ﻿using fade_project.Core;
 using fade_project.Core.Services;
+using fade_project.Core.Services.Derived;
 using fade_project.systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -8,28 +9,32 @@ using Microsoft.Xna.Framework.Graphics;
 namespace fade_project;
 
 public sealed class FadeEngine {
-    public void Initialize() {
-        ServiceManager.Instance.AddService(new SceneService());
-        ServiceManager.Instance.AddService(new InputService());
-        ServiceManager.Instance.AddService(new AssetService());
-        this.Log(LogType.Info, "Engine has initialized successfully.");
+    
+    
+    public void Initialize(ContentManager content) {
+        Logger.Log(this, "Engine has initialized successfully.", LogType.Info);
+        SceneManager.Initialize(content);
     }
     
     public void Load(SpriteBatch spriteBatch, ContentManager content) {
-        ServiceManager.Instance.Initialize(content);
-        ServiceManager.Instance.Load(spriteBatch, content);
-        this.Log(LogType.Info, "Engine has loaded successfully.");
-        ServiceManager.Instance.LateLoad(spriteBatch, content);
-        this.Log(LogType.Info, "Engine has late-loaded successfully.");
+        Assets.Load(content);
+        SceneManager.Load();
+        Logger.Log(this,  "Engine has loaded successfully.", LogType.Info);
     }
     
     public void Update(GameTime gameTime) {
-        ServiceManager.Instance.Update(gameTime);
+        Time.Update(gameTime);
+        Input.Update();
+        SceneManager.Update(gameTime);
+    }
+
+    public void FixedUpdate(float fixedDelta) {
+        CollisionManager.FixedUpdate(fixedDelta);
     }
     
     public void Draw(SpriteBatch spriteBatch) {
         spriteBatch.Begin();
-        ServiceManager.Instance.Draw(spriteBatch);
+        SceneManager.Draw(spriteBatch);
         spriteBatch.End();
     }
 }

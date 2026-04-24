@@ -19,7 +19,7 @@ public abstract class Scene {
     // It is dangerous to blindly remove objects during iteration,
     // We want to do this after iteration so that it is stable.
 
-    protected bool IsLoaded;
+    private bool isLoaded;
     
     private bool IsAddingObjects => objectsInScene.Count > 0;
 
@@ -29,7 +29,7 @@ public abstract class Scene {
             objectsInScene[i].Load();
         }
 
-        IsLoaded = true;
+        isLoaded = true;
     }
     
     public virtual void Draw(SpriteBatch spriteBatch) {
@@ -59,22 +59,22 @@ public abstract class Scene {
 
     public List<T> GetObjectsOfType<T>() where T : FComponent {
         ConcurrentBag<T> objects = [];
-            Parallel.ForEach(objectsInScene, obj => {
-                List<T> t = obj.GetComponents<T>();
-                if (t.Count <= 0) return;
-                foreach (var comp in t) {
-                    objects.Add(comp);
-                }
-            });
-            if (objects.IsEmpty) {
-                this.Log(LogType.Fatal, $"No object in {this.GetType().Name} has a single component of {typeof(T).Name}");
+        Parallel.ForEach(objectsInScene, obj => {
+            List<T> t = obj.GetComponents<T>();
+            if (t.Count <= 0) return;
+            foreach (var comp in t) {
+                objects.Add(comp);
             }
+        });
+        if (objects.IsEmpty) 
+            Logger.Log(this, $"No object in {this.GetType().Name} has a single component of {typeof(T).Name}", LogType.Warn); 
+            
         return objects.ToList();
     }
     
     protected void AddObject(GameObject obj) {
         if (obj == null) return;
-        if (IsLoaded) {
+        if (isLoaded) {
             //TODO:
             // Dynamic initialize/load object during runtime, right now it's only
             // doing this before a scene is loaded causing objects added

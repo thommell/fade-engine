@@ -18,7 +18,7 @@ public class Game1 : Game {
 
     protected override void Initialize() {
         IsFixedTimeStep = false;
-        _engine.Initialize();
+        _engine.Initialize(Content);
         base.Initialize();
     }
 

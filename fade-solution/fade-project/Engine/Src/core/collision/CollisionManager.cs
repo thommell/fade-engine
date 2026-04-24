@@ -8,21 +8,29 @@ using fade_project.systems;
 
 namespace fade_project.Core.Services.Derived;
     
-public sealed class CollisionManager : FComponent, IFixedUpdatableComponent {
-    private Scene activeScene;
-    private List<FCollider> colliders = [];
-    private readonly HashSet<CollisionPair> activeCollisions = [];
-    public override void LateLoad() {
-        activeScene = ServiceManager.Instance.GetService<SceneService>().GetActiveScene();
+public static class CollisionManager {
+    private static Scene activeScene;
+    private static List<FCollider> colliders = [];
+    private static readonly HashSet<CollisionPair> activeCollisions = [];
+    public static void Load() {
+        activeScene = SceneManager.ActiveScene;
         CacheAllColliders();
     }
 
-    public void FixedUpdate(float fixedDeltaTime) {
+    public static void FixedUpdate(float fixedDeltaTime) {
         UpdateCollisions();
     }
 
+    public static void AddCollider(FCollider newCollider) {
+        
+    }
+
+    public static void RemoveCollider(FCollider oldCollider) {
+        
+    }
+
     // This will get reworked to a more cpu-friendly design later, currently it's quite heavy
-    private void UpdateCollisions() {
+    private static void UpdateCollisions() {
         if (colliders.Count < 2) return;
         
         HashSet<CollisionPair> checkedPairs = [];
@@ -37,7 +45,10 @@ public sealed class CollisionManager : FComponent, IFixedUpdatableComponent {
 
                 if (isColliding) {
                     checkedPairs.Add(pair);
-                    if (wasColliding) continue;
+                    if (wasColliding) {
+                        OnCollisionStay(a.Owner, b.Owner);
+                        continue;
+                    };
                     
                     a.IsColliding = true;
                     b.IsColliding = true;
@@ -56,22 +67,27 @@ public sealed class CollisionManager : FComponent, IFixedUpdatableComponent {
         }
     }
 
-    private bool AreObjectsColliding(CollisionPair pair) {
+    private static bool AreObjectsColliding(CollisionPair pair) {
         return pair.ColliderA.Intersects(pair.ColliderB);
     }
 
-    private void OnCollisionEnter(GameObject other, GameObject itself) {
-        itself.Events.Invoke(new CollisionEnterEvent(self: itself, other: other));
-        other.Events.Invoke(new CollisionEnterEvent(self: other, other: itself));
-        this.Log(LogType.Info, $"{itself.GetType().Name} and {other.GetType().Name} have started colliding.");
+    private static void OnCollisionEnter(GameObject other, GameObject self) {
+        self.Events.Invoke(new CollisionEnterEvent(self: self, other: other));
+        other.Events.Invoke(new CollisionEnterEvent(self: other, other: self));
+        Logger.Log(typeof(CollisionManager), $"{self.GetType().Name} and {other.GetType().Name} have started colliding.", LogType.Debug);
+    }
+    
+    private static void OnCollisionStay(GameObject other, GameObject self) {
+        self.Events.Invoke(new CollisionStayEvent(self: self, other: other));
+        other.Events.Invoke(new CollisionStayEvent(self: other, other: self));
     }
 
-    private void OnCollisionExit(GameObject other, GameObject self) {
+    private static void OnCollisionExit(GameObject other, GameObject self) {
         self.Events.Invoke(new CollisionExitEvent(self: self, other: other));
         other.Events.Invoke(new CollisionExitEvent(self: other, other: self));
-        this.Log(LogType.Info, $"{self.GetType().Name} and {other.GetType().Name} have stopped colliding.");
+        Logger.Log(typeof(CollisionManager), $"{self.GetType().Name} and {other.GetType().Name} have stopped colliding.", LogType.Debug);
     }
 
-    private void CacheAllColliders() =>
+    private static void CacheAllColliders() =>
         colliders = activeScene.GetObjectsOfType<FCollider>();
 }
