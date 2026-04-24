@@ -10,10 +10,11 @@ public enum ForceTypes {
     NORMAL,
     EXPLOSIVE
 }
+
 public sealed class FRigidBody : FComponent, IFixedUpdatableComponent {
     private const float Drag = 10f;
-    private Vector2  _velocity = Vector2.Zero;
-    private Vector2 _force = Vector2.Zero;
+    private Vector2  velocity = Vector2.Zero;
+    private Vector2 force = Vector2.Zero;
     
     public void AddForce(Vector2 addedForce, ForceTypes forceType = ForceTypes.NORMAL) {
         if (addedForce == Vector2.Zero || double.IsNaN(addedForce.X) || double.IsNaN(addedForce.Y)) {
@@ -26,7 +27,7 @@ public sealed class FRigidBody : FComponent, IFixedUpdatableComponent {
             ForceTypes.NORMAL => 1,
             _ => throw new ArgumentOutOfRangeException(nameof(forceType), forceType, null)
         };
-        _force += addedForce;
+        force += addedForce;
     }
 
     public void FixedUpdate(float fixedDeltaTime) {
@@ -34,19 +35,19 @@ public sealed class FRigidBody : FComponent, IFixedUpdatableComponent {
     }
 
     public Vector2 GetNormalizedVelocity() {
-        return Vector2.Normalize(_velocity);
+        return Vector2.Normalize(velocity);
     }
     private void ApplyForce(float fixedDeltaTime) {
-        Vector2 accel = _force;
-        _velocity += accel * fixedDeltaTime;
-        _velocity -= _velocity * Drag * fixedDeltaTime;
-        if (_velocity.LengthSquared() < 0.0125f) {
-            _velocity = Vector2.Zero;
+        Vector2 accel = force;
+        velocity += accel * fixedDeltaTime;
+        velocity -= velocity * Drag * fixedDeltaTime;
+        if (velocity.LengthSquared() < 0.0125f) {
+            velocity = Vector2.Zero;
             return;
         }
-        MathHelper.Clamp(_velocity.X, 0, 12.5f);
-        MathHelper.Clamp(_velocity.Y, 0, 12.5f);
-        Transform.Translate(_velocity);
-        _force = Vector2.Zero;
+        MathHelper.Clamp(velocity.X, 0, 12.5f);
+        MathHelper.Clamp(velocity.Y, 0, 12.5f);
+        Transform.Translate(velocity);
+        force = Vector2.Zero;
     }
 }

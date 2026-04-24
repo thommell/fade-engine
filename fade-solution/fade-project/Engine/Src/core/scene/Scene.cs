@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting;
-using System.Threading;
 using System.Threading.Tasks;
 using fade_project.Core;
 using fade_project.Core.Components.BaseAbstract.BaseAbstract;
-using fade_project.Core.Entities.Abstract;
 using fade_project.Core.Services.Enums;
 using Microsoft.Xna.Framework.Graphics;
 

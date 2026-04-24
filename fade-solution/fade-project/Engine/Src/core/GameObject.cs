@@ -1,69 +1,63 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using fade_project.Core.Components.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.Interfaces;
 using fade_project.Core.Event;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace fade_project.Core.Entities.Abstract;
+namespace fade_project.Core;
 
 public class GameObject {
-    private bool _isEnabled;
-
-    private Dictionary<Type, FComponent> _components = [];
-    private Dictionary<Type, List<FComponent>> _compInheritTree = [];
-    private List<IDrawableComponent> _drawableComponents = [];
-    private List<IUpdateableComponent> _updateableComponents = [];
-    private List<IFixedUpdatableComponent> _fixedUpdatableComponents = [];
-    private FTransform _transform;
-    private readonly FadeEventCache _fadeEventCache = new();
-    public FTransform Transform => _transform;
-    public FadeEventCache Events => _fadeEventCache;
+    private bool isEnabled;
+    private readonly Dictionary<Type, FComponent> components = [];
+    private Dictionary<Type, List<FComponent>> compInheritTree = [];
+    private List<IDrawableComponent> drawableComponents = [];
+    private List<IUpdateableComponent> updateableComponents = [];
+    private List<IFixedUpdatableComponent> fixedUpdatableComponents = [];
+    public FTransform Transform { get; }
+    public FadeEventCache Events { get; } = new();
 
     public GameObject(FTransform transform = null, bool isEnabled = true, params FComponent[] components) {
         transform ??= new FTransform();
-        _transform = transform;
-        _isEnabled = isEnabled;
+        this.Transform = transform;
+        this.isEnabled = isEnabled;
         Initialize(components);
     }
 
     public void Load() {
-        // Initialize first (Unity awake-like) -> "get" all components, then Load (Unity's Start)
-        foreach (KeyValuePair<Type, FComponent> component in _components) {
-            if (!_isEnabled) break;
+        // Initialize first (Unity awake-like) -> "get" all components.
+        foreach (KeyValuePair<Type, FComponent> component in components) {
+            if (!isEnabled) break;
             component.Value.Initialize();
         }
 
-        foreach (KeyValuePair<Type, FComponent> component in _components) {
-            if (!_isEnabled) break;
+        // Then "Load" all components (Start-like)
+        foreach (KeyValuePair<Type, FComponent> component in components) {
+            if (!isEnabled) break;
             component.Value.Load();
             component.Value.LateLoad();
         }
     }
 
     public void Draw(SpriteBatch spriteBatch) {
-        for (int i = 0; i < _drawableComponents.Count; i++) {
-            if (!_isEnabled) continue;
-            _drawableComponents[i].Draw(spriteBatch);
+        for (int i = 0; i < drawableComponents.Count; i++) {
+            if (!isEnabled) continue;
+            drawableComponents[i].Draw(spriteBatch);
         }
     }
 
     public void Update(float deltaTime) {
-        for (int i = 0; i < _updateableComponents.Count; i++) {
-            if (!_isEnabled) continue;
-            _updateableComponents[i].Update(deltaTime);
+        for (int i = 0; i < updateableComponents.Count; i++) {
+            if (!isEnabled) continue;
+            updateableComponents[i].Update(deltaTime);
         }
     }
 
     public void FixedUpdate(float fixedDeltaTime) {
-        for (int i = 0; i < _fixedUpdatableComponents.Count; i++) {
-            if (!_isEnabled) continue;
-            _fixedUpdatableComponents[i].FixedUpdate(fixedDeltaTime);
+        for (int i = 0; i < fixedUpdatableComponents.Count; i++) {
+            if (!isEnabled) continue;
+            fixedUpdatableComponents[i].FixedUpdate(fixedDeltaTime);
         }
     }
 
@@ -71,7 +65,7 @@ public class GameObject {
     public T GetComponent<T>() where T : FComponent {
         Type component = typeof(T);
 
-        if (_components.TryGetValue(component, out var match)) {
+        if (components.TryGetValue(component, out var match)) {
             return (T)match;
         }
 
@@ -84,7 +78,7 @@ public class GameObject {
     /// <typeparam name="T">Can only be Component or FadeComponent</typeparam>
     public List<T> GetComponents<T>() where T : FComponent
     {
-        if (!_compInheritTree.TryGetValue(typeof(T), out var list))
+        if (!compInheritTree.TryGetValue(typeof(T), out var list))
             return [];
 
         var result = new List<T>(list.Count);
@@ -97,7 +91,7 @@ public class GameObject {
     // NOT the Component.Initialize call, this makes sure all early
     // added components are handled properly.
     private void Initialize(FComponent[] components) {
-        AddComponent(_transform);
+        AddComponent(Transform);
 
         for (int i = 0; i < components.Length; i++) {
             AddComponent(components[i]);
@@ -110,16 +104,16 @@ public class GameObject {
     private void SetupInterfaces(FComponent[] components) {
         foreach (FComponent component in components) {
             if (component is IDrawableComponent drawableComponent)
-                _drawableComponents.Add(drawableComponent);
+                drawableComponents.Add(drawableComponent);
             if (component is IUpdateableComponent updateableComponent)
-                _updateableComponents.Add(updateableComponent);
+                updateableComponents.Add(updateableComponent);
             if (component is IFixedUpdatableComponent fixedUpdatableComponent)
-                _fixedUpdatableComponents.Add(fixedUpdatableComponent);
+                fixedUpdatableComponents.Add(fixedUpdatableComponent);
         }
     }
 
     private void SetupOwnership() {
-        foreach (KeyValuePair<Type, FComponent> component in _components) {
+        foreach (KeyValuePair<Type, FComponent> component in components) {
             component.Value.SetOwner(this);
         }
     }
@@ -130,12 +124,12 @@ public class GameObject {
         // Hardcoded to check type object as Component shouldn't have a BaseClass other than object.
         Type baseType = type.BaseType == typeof(object) ? typeof(FComponent) : t.GetType().BaseType;
         
-        if (!_compInheritTree.TryGetValue(baseType!, out List<FComponent> list)) {
+        if (!compInheritTree.TryGetValue(baseType!, out List<FComponent> list)) {
             list = [];
-            _compInheritTree[baseType] = list;
+            compInheritTree[baseType] = list;
         }        
         
         list.Add(t);
-        _components.Add(type, t);
+        components.Add(type, t);
     }
 }

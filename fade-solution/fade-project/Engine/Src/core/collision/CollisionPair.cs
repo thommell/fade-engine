@@ -1,4 +1,3 @@
-using fade_project.Core.Components.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.BaseAbstract;
 
 namespace fade_project.Engine.Core.Services.Derived.Collision;

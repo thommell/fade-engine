@@ -1,4 +1,3 @@
-using fade_project.Core.Entities.Abstract;
 using Microsoft.Xna.Framework;
 
 namespace fade_project.Core.Event.Types;

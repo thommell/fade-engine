@@ -7,37 +7,38 @@ using Microsoft.Xna.Framework.Graphics;
 namespace fade_project.Core.Components.BaseAbstract;
 
 public sealed class FSpriteRenderer : FComponent, IDrawableComponent {
-    private Texture2D _texture;
-    private string _textureName;
-    private Color _color = Color.White;
-    private AssetService _assetService;
+    private Texture2D texture;
+    private string textureName;
+    private Color color = Color.White;
+    private AssetService assetService;
     
-    public Color Color => _color;
-    public Texture2D Texture => _texture;
+    public Color Color => color;
+    public Texture2D Texture => texture;
     public FSpriteRenderer(string textureName) {
-        _textureName = textureName;
+        this.textureName = textureName;
     }
     
     public override void Initialize() {
-        _assetService = GetService<AssetService>();
+        assetService = GetService<AssetService>();
         base.Initialize();
     }
     public override void Load() {
-        _texture = SetTexture(_textureName);
-        if (Transform != null && _texture != null) {
-            Transform.SetOrigin(new Vector2(_texture.Width * 0.5f, _texture.Height * 0.5f));
+        texture = SetTexture(textureName);
+        if (Transform != null && texture != null) {
+            Transform.SetOrigin(new Vector2(texture.Width * 0.5f, texture.Height * 0.5f));
         }
         base.Load();
     }
 
     public void Draw(SpriteBatch spriteBatch) {
-        if (_texture == null) return;
+        if (texture == null) return;
+        
         Vector2 drawPos = Vector2.Round(Transform.Position);
         spriteBatch.Draw(
-            _texture,
+            texture,
             drawPos,
             null,
-            _color,
+            color,
             MathHelper.ToDegrees(Transform.Rotation),
             Transform.Origin,
             Transform.Scale,
@@ -46,7 +47,6 @@ public sealed class FSpriteRenderer : FComponent, IDrawableComponent {
             );
     }
 
-    public void SetColor(Color color) => _color = color;
-
-    private Texture2D SetTexture(string textureName) => _assetService.GetTexture(textureName);
+    public void SetColor(Color color) => this.color = color;
+    private Texture2D SetTexture(string textureName) => assetService.GetTexture(textureName);
 }

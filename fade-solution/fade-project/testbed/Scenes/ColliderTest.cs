@@ -1,7 +1,7 @@
 using System;
 using fade_project.containers;
+using fade_project.Core;
 using fade_project.Core.Components.BaseAbstract;
-using fade_project.Core.Entities.Abstract;
 using fade_project.Core.Services.Derived;
 using fade_project.testbed.Scripts;
 using Microsoft.Xna.Framework;

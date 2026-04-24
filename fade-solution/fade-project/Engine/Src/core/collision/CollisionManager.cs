@@ -1,10 +1,7 @@
-using System;
 using System.Collections.Generic;
 using fade_project.containers;
-using fade_project.Core.Components.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.Interfaces;
-using fade_project.Core.Entities.Abstract;
 using fade_project.Core.Event.Types;
 using fade_project.Core.Services.Enums;
 using fade_project.Engine.Core.Services.Derived.Collision;
@@ -13,11 +10,11 @@ using fade_project.systems;
 namespace fade_project.Core.Services.Derived;
     
 public sealed class CollisionManager : FComponent, IFixedUpdatableComponent {
-    private Scene _activeScene;
-    private List<FCollider> _colliders = [];
-    private readonly HashSet<CollisionPair> _activeCollisions = [];
+    private Scene activeScene;
+    private List<FCollider> colliders = [];
+    private readonly HashSet<CollisionPair> activeCollisions = [];
     public override void LateLoad() {
-        _activeScene = ServiceManager.Instance.GetService<SceneService>().GetActiveScene();
+        activeScene = ServiceManager.Instance.GetService<SceneService>().GetActiveScene();
         GetAllColliders();
     }
 
@@ -26,17 +23,17 @@ public sealed class CollisionManager : FComponent, IFixedUpdatableComponent {
     }
 
     private void UpdateCollisions() {
-        if (_colliders.Count < 2) return;
+        if (colliders.Count < 2) return;
         
         HashSet<CollisionPair> checkedPairs = [];
 
-        for (int i = 0; i < _colliders.Count; i++) {
-            FCollider a = _colliders[i];
-            for (int j = i + 1; j < _colliders.Count; j++) {
-                FCollider b = _colliders[j];
+        for (int i = 0; i < colliders.Count; i++) {
+            FCollider a = colliders[i];
+            for (int j = i + 1; j < colliders.Count; j++) {
+                FCollider b = colliders[j];
                 var pair = new CollisionPair(a, b);
                 bool isColliding = AreObjectsColliding(pair);
-                bool wasColliding = _activeCollisions.Contains(pair);
+                bool wasColliding = activeCollisions.Contains(pair);
 
                 if (isColliding) {
                     checkedPairs.Add(pair);
@@ -53,9 +50,9 @@ public sealed class CollisionManager : FComponent, IFixedUpdatableComponent {
                 }
             }
         }
-        _activeCollisions.Clear();
+        activeCollisions.Clear();
         foreach (var pair in checkedPairs) {
-            _activeCollisions.Add(pair);
+            activeCollisions.Add(pair);
         }
     }
 
@@ -76,6 +73,6 @@ public sealed class CollisionManager : FComponent, IFixedUpdatableComponent {
     }
 
     private void GetAllColliders() {
-        _colliders = _activeScene.GetObjectsOfType<FCollider>();
+        colliders = activeScene.GetObjectsOfType<FCollider>();
     }
 }
