@@ -1,8 +1,6 @@
-
 using System;
 using System.Collections.Generic;
 using fade_project.Core.Services.Derived;
-using fade_project.Core.Services.Enums;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,13 +18,13 @@ internal sealed class ServiceManager {
         foreach (KeyValuePair<Type, Service> service in Services) {
             service.Value.Initialize(content);
         }
-        this.Log(LogType.INFO, "Services have initialized.");
+        this.Log(LogType.Info, "Services have initialized.");
     }
     public void Load(SpriteBatch spriteBatch, ContentManager content) {
         foreach (KeyValuePair<Type, Service> service in Services) {
             service.Value.Load(spriteBatch, content);
         }
-        this.Log(LogType.INFO, "Services have loaded.");            
+        this.Log(LogType.Info, "Services have loaded.");            
     }
 
     public void LateLoad(SpriteBatch spriteBatch, ContentManager content) {
@@ -56,7 +54,7 @@ internal sealed class ServiceManager {
     internal T GetService<T>() where T : Service {
     T service = (T)Services[typeof(T)];
     if (service == null) {
-        this.Log(LogType.WARN, $"Requested service doesn't exist.");
+        this.Log(LogType.Warn, $"Requested service doesn't exist.");
         return null;
     }
     return service;

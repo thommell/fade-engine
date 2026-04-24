@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 namespace fade_project.Core.Services;
 
 public abstract class Service {
-    internal ServiceManager manager;
     public virtual void Initialize(ContentManager content) {}
     public virtual void Load(SpriteBatch spriteBatch, ContentManager content) {}
     public virtual void LateLoad(SpriteBatch spriteBatch, ContentManager content) {}

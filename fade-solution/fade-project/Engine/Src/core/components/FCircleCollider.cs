@@ -7,24 +7,24 @@ using Microsoft.Xna.Framework.Graphics;
 namespace fade_project.Core.Components.BaseAbstract;
 
 public sealed class FCircleCollider : FCollider, IDrawableComponent {
-    private int _radius;
-    private Vector2 _center;
-    private FSpriteRenderer _renderer;
+    private int radius;
+    private Vector2 center;
+    private FSpriteRenderer renderer;
     
-    public int Radius => _radius;
-    public Vector2 Center => _center;
+    public int Radius => radius;
+    public Vector2 Center => center;
 
     public FCircleCollider(int radius = 3) {
-        _radius = radius;
+        this.radius = radius;
     }
 
     public override void Initialize() {
-        _renderer = GetComponent<FSpriteRenderer>();
+        renderer = GetComponent<FSpriteRenderer>();
         base.Initialize();
     }
 
     protected override void UpdateCollider(MoveEvent e) {
-        _center = Transform.Position;
+        center = Transform.Position;
     }
 
     public override bool Intersects(FCollider other) =>

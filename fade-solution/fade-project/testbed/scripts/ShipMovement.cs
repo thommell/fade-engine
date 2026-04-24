@@ -3,7 +3,6 @@ using fade_project.Core.Components.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.Interfaces;
 using fade_project.Core.Event.Types;
-using fade_project.Core.Services.Enums;
 using fade_project.systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -48,7 +47,7 @@ public class ShipMovement : FadeComponent, IFixedUpdatableComponent, IUpdateable
     }
     private void Boost() {
         if (_inputService.IsKeyPressed(Keys.Space)) {
-            _rb.AddForce(_rb.GetNormalizedVelocity() * 10, ForceTypes.EXPLOSIVE);
+            _rb.AddForce(_rb.GetNormalizedVelocity() * 10, ForceTypes.Explosive);
         }
     }
     public void Update(float deltaTime) {

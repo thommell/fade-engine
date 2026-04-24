@@ -3,7 +3,6 @@ using fade_project.containers;
 using fade_project.Core.Components.BaseAbstract.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.Interfaces;
 using fade_project.Core.Event.Types;
-using fade_project.Core.Services.Enums;
 using fade_project.Engine.Core.Services.Derived.Collision;
 using fade_project.systems;
 
@@ -15,13 +14,14 @@ public sealed class CollisionManager : FComponent, IFixedUpdatableComponent {
     private readonly HashSet<CollisionPair> activeCollisions = [];
     public override void LateLoad() {
         activeScene = ServiceManager.Instance.GetService<SceneService>().GetActiveScene();
-        GetAllColliders();
+        CacheAllColliders();
     }
 
     public void FixedUpdate(float fixedDeltaTime) {
         UpdateCollisions();
     }
 
+    // This will get reworked to a more cpu-friendly design later, currently it's quite heavy
     private void UpdateCollisions() {
         if (colliders.Count < 2) return;
         
@@ -63,16 +63,15 @@ public sealed class CollisionManager : FComponent, IFixedUpdatableComponent {
     private void OnCollisionEnter(GameObject other, GameObject itself) {
         itself.Events.Invoke(new CollisionEnterEvent(self: itself, other: other));
         other.Events.Invoke(new CollisionEnterEvent(self: other, other: itself));
-        this.Log(LogType.INFO, $"{itself.GetType().Name} and {other.GetType().Name} have started colliding.");
+        this.Log(LogType.Info, $"{itself.GetType().Name} and {other.GetType().Name} have started colliding.");
     }
 
     private void OnCollisionExit(GameObject other, GameObject self) {
         self.Events.Invoke(new CollisionExitEvent(self: self, other: other));
         other.Events.Invoke(new CollisionExitEvent(self: other, other: self));
-        this.Log(LogType.INFO, $"{self.GetType().Name} and {other.GetType().Name} have stopped colliding.");
+        this.Log(LogType.Info, $"{self.GetType().Name} and {other.GetType().Name} have stopped colliding.");
     }
 
-    private void GetAllColliders() {
+    private void CacheAllColliders() =>
         colliders = activeScene.GetObjectsOfType<FCollider>();
-    }
 }

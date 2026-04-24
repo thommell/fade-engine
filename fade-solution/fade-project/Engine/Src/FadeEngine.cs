@@ -1,6 +1,5 @@
 ﻿using fade_project.Core;
 using fade_project.Core.Services;
-using fade_project.Core.Services.Enums;
 using fade_project.systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -13,15 +12,15 @@ public sealed class FadeEngine {
         ServiceManager.Instance.AddService(new SceneService());
         ServiceManager.Instance.AddService(new InputService());
         ServiceManager.Instance.AddService(new AssetService());
-        this.Log(LogType.INFO, "Engine has initialized successfully.");
+        this.Log(LogType.Info, "Engine has initialized successfully.");
     }
     
     public void Load(SpriteBatch spriteBatch, ContentManager content) {
         ServiceManager.Instance.Initialize(content);
         ServiceManager.Instance.Load(spriteBatch, content);
-        this.Log(LogType.INFO, "Engine has loaded successfully.");
+        this.Log(LogType.Info, "Engine has loaded successfully.");
         ServiceManager.Instance.LateLoad(spriteBatch, content);
-        this.Log(LogType.INFO, "Engine has late-loaded successfully.");
+        this.Log(LogType.Info, "Engine has late-loaded successfully.");
     }
     
     public void Update(GameTime gameTime) {

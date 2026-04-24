@@ -3,7 +3,6 @@ using System.Linq;
 using fade_project.containers;
 using fade_project.Core;
 using fade_project.Core.Services;
-using fade_project.Core.Services.Enums;
 using fade_project.testbed.scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -57,7 +56,7 @@ public sealed class SceneService : Service {
     public void RequestSceneChange(string sceneName) {
         //TODO: Add log info that scene doesnt exist
         if (!_scenes.TryGetValue(sceneName, out Scene newScene) || newScene == _activeScene) {
-            this.Log(LogType.WARN, "Scene is null or already active.");
+            this.Log(LogType.Warn, "Scene is null or already active.");
             return;
         }
         ChangeScene(newScene);
@@ -68,7 +67,7 @@ public sealed class SceneService : Service {
         _activeScene?.OnExit();
         _activeScene = newScene;
         _activeScene.OnEnter();
-        this.Log(LogType.INFO, $"Changed scene to {newScene.GetType().Name}");
+        this.Log(LogType.Info, $"Changed scene to {newScene.GetType().Name}");
     }
 
     private void CreateScenes() {

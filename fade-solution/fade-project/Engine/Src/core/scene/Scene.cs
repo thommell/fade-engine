@@ -4,17 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using fade_project.Core;
 using fade_project.Core.Components.BaseAbstract.BaseAbstract;
-using fade_project.Core.Services.Enums;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace fade_project.containers;
 
 public abstract class Scene {
-    private List<GameObject> _objectsInScene = [];
-    private List<GameObject> _objectsToAdd = [];
-    private List<GameObject> _objectsToRemove = [];
+    private List<GameObject> objectsInScene = [];
+    private List<GameObject> objectsToAdd = [];
+    private List<GameObject> objectsToRemove = [];
 
-    private Dictionary<GameObject, FCollider> _colliders = [];
+    private Dictionary<GameObject, FCollider> colliders = [];
 
     //TODO:
     // It is dangerous to blindly remove objects during iteration,
@@ -22,20 +21,20 @@ public abstract class Scene {
 
     protected bool IsLoaded;
     
-    private bool IsAddingObjects => _objectsInScene.Count > 0;
+    private bool IsAddingObjects => objectsInScene.Count > 0;
 
     public virtual void OnEnter() {
         AddObjectsToScene();
-        for (int i = 0; i < _objectsInScene.Count; i++) {
-            _objectsInScene[i].Load();
+        for (int i = 0; i < objectsInScene.Count; i++) {
+            objectsInScene[i].Load();
         }
 
         IsLoaded = true;
     }
     
     public virtual void Draw(SpriteBatch spriteBatch) {
-        for (int i = 0; i < _objectsInScene.Count; i++) {
-            _objectsInScene[i].Draw(spriteBatch);
+        for (int i = 0; i < objectsInScene.Count; i++) {
+            objectsInScene[i].Draw(spriteBatch);
         }
     }
 
@@ -45,14 +44,14 @@ public abstract class Scene {
             AddObjectsToScene();
         }
         
-        for (int i = 0; i < _objectsInScene.Count; i++) {
-            _objectsInScene[i].Update(deltaTime);
+        for (int i = 0; i < objectsInScene.Count; i++) {
+            objectsInScene[i].Update(deltaTime);
         }
     }
 
     public void FixedUpdate(float fixedDeltaTime) {
-        for (int i = 0; i < _objectsInScene.Count; i++) {
-            _objectsInScene[i].FixedUpdate(fixedDeltaTime);
+        for (int i = 0; i < objectsInScene.Count; i++) {
+            objectsInScene[i].FixedUpdate(fixedDeltaTime);
         }
     }
     
@@ -60,7 +59,7 @@ public abstract class Scene {
 
     public List<T> GetObjectsOfType<T>() where T : FComponent {
         ConcurrentBag<T> objects = [];
-            Parallel.ForEach(_objectsInScene, obj => {
+            Parallel.ForEach(objectsInScene, obj => {
                 List<T> t = obj.GetComponents<T>();
                 if (t.Count <= 0) return;
                 foreach (var comp in t) {
@@ -68,7 +67,7 @@ public abstract class Scene {
                 }
             });
             if (objects.IsEmpty) {
-                this.Log(LogType.FATAL, $"No object in {this.GetType().Name} has a single component of {typeof(T).Name}");
+                this.Log(LogType.Fatal, $"No object in {this.GetType().Name} has a single component of {typeof(T).Name}");
             }
         return objects.ToList();
     }
@@ -83,11 +82,11 @@ public abstract class Scene {
             return;
         }
 
-        _objectsToAdd.Add(obj);
+        objectsToAdd.Add(obj);
     }
 
     private void AddObjectsToScene() {
-        _objectsInScene.AddRange(_objectsToAdd);
-        _objectsToAdd.Clear();
+        objectsInScene.AddRange(objectsToAdd);
+        objectsToAdd.Clear();
     }
 }

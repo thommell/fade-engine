@@ -1,14 +1,13 @@
 using System;
 using fade_project.Core.Components.BaseAbstract.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.Interfaces;
-using fade_project.Core.Services.Enums;
 using Microsoft.Xna.Framework;
 
 namespace fade_project.Core.Components.BaseAbstract;
 
 public enum ForceTypes {
-    NORMAL,
-    EXPLOSIVE
+    Normal,
+    Explosive
 }
 
 public sealed class FRigidBody : FComponent, IFixedUpdatableComponent {
@@ -16,15 +15,15 @@ public sealed class FRigidBody : FComponent, IFixedUpdatableComponent {
     private Vector2  velocity = Vector2.Zero;
     private Vector2 force = Vector2.Zero;
     
-    public void AddForce(Vector2 addedForce, ForceTypes forceType = ForceTypes.NORMAL) {
+    public void AddForce(Vector2 addedForce, ForceTypes forceType = ForceTypes.Normal) {
         if (addedForce == Vector2.Zero || double.IsNaN(addedForce.X) || double.IsNaN(addedForce.Y)) {
-            this.Log(LogType.WARN, "Tried to add zero force.");
+            this.Log(LogType.Warn, "Tried to add zero force.");
             return;
         }
 
         addedForce *= forceType switch {
-            ForceTypes.EXPLOSIVE => 25,
-            ForceTypes.NORMAL => 1,
+            ForceTypes.Explosive => 25,
+            ForceTypes.Normal => 1,
             _ => throw new ArgumentOutOfRangeException(nameof(forceType), forceType, null)
         };
         force += addedForce;
