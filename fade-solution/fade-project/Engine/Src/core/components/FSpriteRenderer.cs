@@ -7,14 +7,18 @@ using Microsoft.Xna.Framework.Graphics;
 namespace fade_project.Core.Components.BaseAbstract;
 
 public sealed class FSpriteRenderer : FComponent, IDrawableComponent {
+    private Color color;
     private Texture2D texture;
     private string textureName;
-    private Color color = Color.White;
+    private float layerDepth;
     
     public Color Color => color;
     public Texture2D Texture => texture;
-    public FSpriteRenderer(string textureName) {
+    
+    public FSpriteRenderer(string textureName = "", Color? color = null, float layerDepth = 1f) {
         this.textureName = textureName;
+        this.color = color ?? Color.White;
+        this.layerDepth = layerDepth;
     }
     
     public override void Load() {
@@ -28,17 +32,16 @@ public sealed class FSpriteRenderer : FComponent, IDrawableComponent {
     public void Draw(SpriteBatch spriteBatch) {
         if (texture == null) return;
         
-        Vector2 drawPos = Vector2.Round(Transform.Position);
         spriteBatch.Draw(
             texture,
-            drawPos,
+            Transform.Position,
             null,
             color,
             MathHelper.ToDegrees(Transform.Rotation),
             Transform.Origin,
             Transform.Scale,
             SpriteEffects.None,
-            1
+            layerDepth
             );
     }
 

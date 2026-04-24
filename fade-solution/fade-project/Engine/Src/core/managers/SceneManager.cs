@@ -51,6 +51,7 @@ public static class SceneManager {
         Logger.Log(typeof(SceneManager), $"Changed scene to {newScene.GetType().Name}", LogType.Info);
     }
 
+    // temp to create scenes as there are none right now
     private static void CreateScenes() {
         scenes.TryAdd("test", new ColliderTest());
         isInitialized = true;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using fade_project.containers;
 using fade_project.Core.Components.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.BaseAbstract;
 using fade_project.Core.Components.BaseAbstract.Interfaces;
@@ -15,8 +16,13 @@ public class GameObject {
     private List<IDrawableComponent> drawableComponents = [];
     private List<IUpdateableComponent> updateableComponents = [];
     private List<IFixedUpdatableComponent> fixedUpdatableComponents = [];
+    private Scene activeScene;
+    
     public FTransform Transform { get; }
     public FadeEventCache Events { get; } = new();
+    public Scene ActiveScene {
+        get => activeScene;
+    }
 
     public GameObject(FTransform transform = null, bool isEnabled = true, params FComponent[] components) {
         transform ??= new FTransform();
@@ -87,6 +93,8 @@ public class GameObject {
 
         return result;
     }
+    
+    public void SetActiveScene(Scene scene) => activeScene = scene;
 
     // NOT the Component.Initialize call, this makes sure all early
     // added components are handled properly.

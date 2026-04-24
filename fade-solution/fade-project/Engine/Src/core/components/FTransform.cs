@@ -6,7 +6,7 @@ namespace fade_project.Core.Components.BaseAbstract;
 
 public sealed class FTransform : FComponent {
     private Vector2 position;
-    private Vector2 scale = Vector2.One;
+    private Vector2 scale;
     private Vector2 origin;
     private float rotation;
     

@@ -86,6 +86,10 @@ public abstract class Scene {
     }
 
     private void AddObjectsToScene() {
+        foreach (GameObject obj in objectsToAdd) {
+            obj.SetActiveScene(this);
+        }
+        
         objectsInScene.AddRange(objectsToAdd);
         objectsToAdd.Clear();
     }

@@ -16,7 +16,7 @@ public sealed class FadeEngine {
         SceneManager.Initialize(content);
     }
     
-    public void Load(SpriteBatch spriteBatch, ContentManager content) {
+    public void Load(ContentManager content) {
         Assets.Load(content);
         SceneManager.Load();
         Logger.Log(this,  "Engine has loaded successfully.", LogType.Info);
@@ -33,7 +33,7 @@ public sealed class FadeEngine {
     }
     
     public void Draw(SpriteBatch spriteBatch) {
-        spriteBatch.Begin();
+        spriteBatch.Begin(samplerState: SamplerState.PointClamp); 
         SceneManager.Draw(spriteBatch);
         spriteBatch.End();
     }

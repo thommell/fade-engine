@@ -4,37 +4,37 @@ using Microsoft.Xna.Framework.Graphics;
 namespace fade_project;
 
 public class Game1 : Game {
-    private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
+    private GraphicsDeviceManager graphics;
+    private SpriteBatch spriteBatch;
     
-    private readonly FadeEngine _engine;
+    private readonly FadeEngine engine;
 
     public Game1() {
-        _engine = new FadeEngine();
-        _graphics = new GraphicsDeviceManager(this);
+        engine = new FadeEngine();
+        graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
 
     protected override void Initialize() {
         IsFixedTimeStep = false;
-        _engine.Initialize(Content);
+        engine.Initialize(Content);
         base.Initialize();
     }
 
     protected override void LoadContent() {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
-        _engine.Load(_spriteBatch, Content);
+        spriteBatch = new SpriteBatch(GraphicsDevice);
+        engine.Load(Content);
     }
 
     protected override void Update(GameTime gameTime) {
-        _engine.Update(gameTime);
+        engine.Update(gameTime);
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime) {
         GraphicsDevice.Clear(Color.CornflowerBlue);
-        _engine.Draw(_spriteBatch);
+        engine.Draw(spriteBatch);
         base.Draw(gameTime);
     }
 }

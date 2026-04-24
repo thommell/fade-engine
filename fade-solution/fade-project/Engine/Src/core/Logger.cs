@@ -14,11 +14,12 @@ public enum LogType {
 public enum LogSource {
     Engine,
     Transform,
+    SceneManager,
     Unknown
 }
     
 public static class Logger {
-    private static readonly Dictionary<LogType, ConsoleColor> EnumColors = new() {
+    private static readonly Dictionary<LogType, ConsoleColor> enumColors = new() {
         { LogType.Fatal, ConsoleColor.Red },
         { LogType.Warn , ConsoleColor.Yellow },
         { LogType.Info , ConsoleColor.Blue },
@@ -26,18 +27,20 @@ public static class Logger {
     };
 
     public static void Log(object sender, string message, LogType type) {
+        // what the fuck
         LogSource loggingSource = sender switch {
-            FTransform => LogSource.Transform,
-            FadeEngine => LogSource.Engine,
+            Type t when t == typeof(FTransform) => LogSource.Transform,
+            Type t when t == typeof(FadeEngine) => LogSource.Engine,
+            Type t when t == typeof(SceneManager) => LogSource.SceneManager,
             _ => LogSource.Unknown
         };
         
         if (type == LogType.Fatal) {
-            Console.BackgroundColor = EnumColors[type];
+            Console.BackgroundColor = enumColors[type];
             Console.ForegroundColor = ConsoleColor.Black;
         }
         else
-            Console.ForegroundColor = EnumColors[type];
+            Console.ForegroundColor = enumColors[type];
 
         Console.WriteLine($"[{loggingSource.ToString().ToUpper()}-{Enum.GetName(typeof(LogType), type)}]: {message}");
         Console.ResetColor();
