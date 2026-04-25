@@ -1,0 +1,11 @@
+namespace FadeCore.Runtime;
+
+public readonly struct CollisionEnterEvent : IFadeEvent {
+    public GameObject Self { get; }
+    public GameObject Other { get; }
+    
+    public CollisionEnterEvent(GameObject self, GameObject other) {
+        Self = self;
+        Other = other;
+    }
+}
